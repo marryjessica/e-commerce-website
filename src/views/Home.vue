@@ -2,10 +2,11 @@
 
   <div class="home">
     <div id="head">
+      <HelloWorld/>
       <p>联系我们：12345678901</p>
     </div>
     <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    
   </div>
 
 </template>

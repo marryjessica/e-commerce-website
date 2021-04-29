@@ -1,14 +1,35 @@
 <template>
   <div id="head-bar">
-    <div class="head-bar-inside">
-      <div class="head-bar-container">
-        <div class="head-bar-container-left">
+    <el-header class="head-bar-inside">
+      <el-row class="head-bar-container" type="flex" justify="center">
+        <el-col class="head-bar-container-left">
           <div class="head-bar-logo">
             <a class="logo" href="/">中新材</a>
           </div>
-        </div>
-      </div>
-    </div>
+        </el-col>
+        <el-col class="head-bar-container-middle">
+          <div class="head-bar-search-container">
+            <div class="head-bar-search">
+              <input id="head-bar-search-input" type="text" autocomplete="off" value placeholder="搜索">
+              <el-button id="head-bar-search-button" type="primary" icon="el-icon-search">搜索</el-button>
+            </div>
+          </div>
+        </el-col>
+        <el-col class="head-bar-container-right">
+          <div class="head-bar-container-others">
+            <div class="head-bar-contact-us-container">
+              <span class="head-bar-contact-us" id="head-bar-contact-us">联系我们：12345678901</span>
+            </div>
+            <div class="head-bar-login-container">
+              <a class="head-bar-login" id="head-bar-login" href="/">登陆</a>
+            </div>
+            <div class="head-bar-cart-container">
+              <el-button class="head-bar-cart">购物车</el-button>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+    </el-header>
   </div>
 </template>
 
@@ -69,5 +90,122 @@ export default {
     padding-top: 10px;
   }
 
+  #head-bar .head-bar-container .head-bar-container-middle {
+    -webkit-box-flex: 1;
+    width: 100%;
+    padding: 0 16px;
+  }
+
+  #head-bar .head-bar-search-container {
+    width: 100%;
+    max-width: 720px;
+    height: 50px;
+    line-height: 32px;
+    margin-top: 13px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+  }
+
+  #head-bar .head-bar-search-container .head-bar-search {
+  width: 100%;
+  height: 50px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 0;
+  }
+
+  #head-bar .head-bar-search-container .head-bar-search input{
+    font-size: 14px;
+    display: inline-block;
+    width: calc(100% - 40px);
+    height: 100%;
+    line-height:1.5;
+    border: 0 none;
+    outline: 0;
+    background: #f5f6f7;
+    color: #222226;
+    vertical-align: top;
+    text-indent: 16px;
+    border: 1px solid #e8e8ed;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-radius: 4px 0 0 4px;
+  }
+
+  #head-bar .head-bar-search-container .head-bar-search el-button{
+    display: inline-block;
+    width: 40px;
+    height: 100%;
+    outline: 0;
+    border: 0 none;
+    background: url(https://g.csdnimg.cn/common/csdn-toolbar/images/csdn-white-search.png) no-repeat center center #03a9f4;
+    background-size: 70%;
+    border-radius: 0 4px 4px 0;
+    font-size: 0;
+    cursor: pointer;
+    -webkit-transition: all .2s ease-in;
+    transition: all .2s ease-in;
+  }
+
+  #head-bar .head-bar-container .head-bar-container-right {
+    -webkit-box-flex: 0;
+    flex: none;
+    margin-right: 200px;
+  }
+
+  #head-bar .head-bar-container-others {
+    height: 100%;
+    margin-top: 20px;
+  }
+
+  #head-bar .head-bar-container-others .head-bar-contact-us-container {
+    height: 100%;
+    display: inline;
+    margin-right: 150px;
+  }
+
+  #head-bar .head-bar-container-others .head-bar-contact-us {
+    text-decoration: none;
+    display: inline;
+    height: 100%;
+    color: white;
+    padding: 0 10px;
+    font-size: 22px;
+    padding-top: 10px;
+  }
+
+  #head-bar .head-bar-container-others .head-bar-login-container {
+    height: 100%;
+    display: inline;
+    margin-right: 100px;
+  }
+
+  #head-bar .head-bar-container-others .head-bar-login {
+    text-decoration: none;
+    display: inline;
+    height: 100%;
+    color: white;
+    padding: 0 10px;
+    font-size: 26px;
+    font-weight: bold;
+    padding-top: 10px;
+  }
+
+  #head-bar .head-bar-container-others .head-bar-cart-container {
+    height: 100%;
+    display: inline;
+  }
+
+   #head-bar .head-bar-container-others .head-bar-cart {
+    text-decoration: none;
+    display: inline;
+    height: 100%;
+    color: white;
+    padding: 0 10px;
+    font-size: 26px;
+    font-weight: bold;
+    padding-top: 10px;
+  }
 
 </style>

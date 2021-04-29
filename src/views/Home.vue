@@ -1,11 +1,14 @@
 <template>
 
   <div class="home">
-    <div id="head">
-      <HelloWorld/>
-      <p>联系我们：12345678901</p>
-    </div>
-    <img alt="Vue logo" src="../assets/logo.png">
+    <el-row :gutter="20">
+      <div id="head">
+        <Header/>
+      </div>
+    </el-row>
+    <el-row :gutter="20">
+      <img alt="Vue logo" src="../assets/logo.png">
+    </el-row>
     
   </div>
 
@@ -13,12 +16,12 @@
 
 <script>
 // @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import Header from '@/components/Header.vue'
 
 export default {
   name: 'Home',
   components: {
-    HelloWorld
+    Header
   }
 }
 </script>

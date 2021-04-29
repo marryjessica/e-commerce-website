@@ -24,7 +24,7 @@
               <a class="head-bar-login" id="head-bar-login" href="/">登陆</a>
             </div>
             <div class="head-bar-cart-container">
-              <el-button class="head-bar-cart">购物车</el-button>
+              <el-button class="head-bar-cart" herf="/">购物车</el-button>
             </div>
           </div>
         </el-col>
@@ -35,7 +35,7 @@
 
 <script>
 export default {
-  name: 'HelloWorld'
+  name: 'Header'
 }
 </script>
 

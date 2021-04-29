@@ -47,6 +47,7 @@ export default {
     left: 0px;
 		width: 100%;
 		background-color: #5CB2FF;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
 	}
 
   #head-bar * {

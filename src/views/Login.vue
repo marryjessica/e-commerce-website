@@ -10,6 +10,7 @@
             <h2>用户登录</h2>
             <el-form ref="form" class="login-form" :model="form">
               <el-form-item>
+                <input type="text" placeholder="账号/手机号">
                 <!-- <el-input v-model="form.name" placeholder="账号/手机号"></el-input> -->
               </el-form-item>
             </el-form>

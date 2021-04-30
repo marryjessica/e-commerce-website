@@ -34,14 +34,15 @@ export default {
 
 <style>
 	/* 快捷导航栏 */
-	#head-bar {
+  #head-bar {
     position: fixed;
     top: 0px;
     left: 0px;
-		width: 100%;
-		background-color: #5CB2FF;
+    width: 100%;
+    height: 100px;
+    background-color: #5CB2FF;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
-	}
+ }
 
   #head-bar * {
     padding: 0;

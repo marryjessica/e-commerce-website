@@ -8,24 +8,16 @@
           </div>
         </div>
         <div class="head-bar-container-middle">
-          <div class="head-bar-search-container">
-            <div class="head-bar-search">
-              <input id="head-bar-search-input" type="text" autocomplete="off" value placeholder="搜索">
-              <el-button class="head-bar-search-button" id="head-bar-search-button" >搜索</el-button>
+          <div class="head-bar-title-container">
+            <div class="head-bar-title">
+              <span>用户登录</span>
             </div>
           </div>
         </div>
         <div class="head-bar-container-right">
           <div class="head-bar-container-others">
             <div class="head-bar-contact-us-container">
-              <span class="head-bar-contact-us" id="head-bar-contact-us"><i class="el-icon-phone-outline"/>联系我们：12345678901</span>
-            </div>
-            <div class="head-bar-login-container">
-              <router-link class="head-bar-login" id="head-bar-login" to="/login"><i class="el-icon-user"/>登陆</router-link>
-            </div>
-            <div class="head-bar-cart-container">
-              <router-link class="head-bar-cart" to="/shopping_cart"><i class="el-icon-shopping-cart-1"/>购物车</router-link>
-              
+              <span class="head-bar-contact-us" id="head-bar-contact-us">联系我们：12345678901</span>
             </div>
           </div>
         </div>
@@ -36,7 +28,7 @@
 
 <script>
 export default {
-  name: 'Header'
+  name: 'loginHeader'
 }
 </script>
 
@@ -98,7 +90,7 @@ export default {
     padding: 0 16px;
   }
 
-  #head-bar .head-bar-search-container {
+  #head-bar .head-bar-title-container {
     width: 100%;
     max-width: 720px;
     height: 50px;
@@ -109,7 +101,7 @@ export default {
     position: relative;
   }
 
-  #head-bar .head-bar-search-container .head-bar-search {
+  #head-bar .head-bar-title-container .head-bar-title {
   width: 100%;
   height: 50px;
   -webkit-box-sizing: border-box;
@@ -117,37 +109,12 @@ export default {
   font-size: 0;
   }
 
-  #head-bar .head-bar-search-container .head-bar-search input{
-    font-size: 14px;
-    display: inline-block;
-    width: calc(100% - 40px);
-    height: 100%;
-    line-height:1.5;
-    border: 0 none;
-    outline: 0;
-    background: #f5f6f7;
-    color: #222226;
-    vertical-align: top;
-    text-indent: 16px;
-    border: 1px solid #e8e8ed;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    border-radius: 4px 0 0 4px;
-  }
-
-  #head-bar .head-bar-search-container .head-bar-search .head-bar-search-button{
-    display: inline-block;
-    width: 40px;
-    height: 100%;
-    outline: 0;
-    border: 0 none;
-    background: url(https://g.csdnimg.cn/common/csdn-toolbar/images/csdn-white-search.png) no-repeat center center #03a9f4;
-    background-size: 70%;
-    border-radius: 0 4px 4px 0;
-    font-size: 0;
-    cursor: pointer;
-    -webkit-transition: all .2s ease-in;
-    transition: all .2s ease-in;
+  #head-bar .head-bar-title-container .head-bar-title span {
+      font-size: 36px;
+      color: white;
+      font-weight: bold;
+      position: absolute;
+      bottom: 2px;
   }
 
   #head-bar .head-bar-container .head-bar-container-right {
@@ -177,12 +144,6 @@ export default {
     padding-top: 10px;
   }
 
-  .el-icon-phone-outline {
-    content: "";
-    position: relative;
-    bottom: -1px;
-  }
-
   #head-bar .head-bar-container-others .head-bar-login-container {
     height: 100%;
     display: inline;
@@ -200,13 +161,6 @@ export default {
     padding-top: 10px;
   }
 
-  .el-icon-user:before {
-    content: "";
-    position: relative;
-    bottom: -1px;
-    font-size: 30px;
-}
-
   #head-bar .head-bar-container-others .head-bar-cart-container {
     height: 100%;
     display: inline;
@@ -222,12 +176,5 @@ export default {
     font-weight: bold;
     padding-top: 10px;
   }
-
-  .el-icon-shopping-cart-1:before {
-    content: "";
-    position: relative;
-    bottom: -2px;
-    font-size: 30px;
-}
 
 </style>

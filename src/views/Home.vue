@@ -1,14 +1,21 @@
 <template>
 
   <div class="home">
-    <el-row :gutter="20">
-      <div id="head">
-        <Header/>
-      </div>
-    </el-row>
-    <el-row :gutter="20">
-      <img alt="Vue logo" src="../assets/logo.png">
-    </el-row>
+    <el-container>
+      <el-header>
+        <div id="head">
+          <Header/>
+        </div>
+      </el-header>
+      <el-main>
+        <div>
+          <img alt="Vue logo" src="../assets/logo.png">
+        </div>
+      </el-main>
+      <el-footer>
+
+      </el-footer>
+    </el-container>
     
   </div>
 

@@ -8,6 +8,7 @@
         <el-container class="login-main-back-container">
           <el-card class="login-card">
             <h2>用户登录</h2>
+            <!-- <h2>{msg[0].username}</h2> -->
             <el-form
               class="login-form"
               :model="ruleForm"
@@ -87,6 +88,8 @@ export default {
     });
 
     const submitForm = async () => {
+      // var fakeUsers = this.$App.state.fakeUsers;
+
       // loginForm.value.validate((valid) => {
       //   if (valid) {
 
@@ -112,18 +115,6 @@ export default {
   //     return true
   //   }
   // },
-  props: {
-    fakeUsers: [
-      {
-        username: "sam",
-        password: "123456",
-      },
-      {
-        username: "jessica",
-        password: "654321",
-      },
-    ],
-  },
   data() {
     return {
       checked: true
@@ -175,4 +166,11 @@ export default {
 .login-go-to-signup-page {
   text-decoration: none;
 }
+
+.login-other-opts-area .el-form-item__content{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
 </style>

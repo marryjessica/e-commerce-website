@@ -63,6 +63,7 @@
 import loginHeader from "@/components/Login_header.vue";
 import Footer from "@/components/Footer.vue";
 import { reactive, ref, toRefs } from "vue";
+import json from "@/assets/fakeUsers.json";
 
 export default {
   name: "Login",
@@ -87,39 +88,45 @@ export default {
       },
     });
 
-    const submitForm = async () => {
-      // var fakeUsers = this.$App.state.fakeUsers;
+    var fakeusers = json.fakeusers;
+    console.log(fakeusers)
 
+    const submitForm = async () => {
       // loginForm.value.validate((valid) => {
       //   if (valid) {
-
+          
+      //     // this.isValidate(state.ruleForm.username).then(res => {
+      //     //   console.log(state.ruleForm.username,res)
+      //     //   window.location.href = '/'
+      //     // })
+      //   }
+      //   else {
+      //     console.log('submit error')
+      //     return false
       //   }
       // })
       window.location.href = '/'
     };
-
+    
     return {
       ...toRefs(state),
       loginForm,
       submitForm
     }
   },
-  // methods: {
-  //   isValidate(value) {
-  //     if (props.includes(value.username)==false){
-  //       return false
-  //     }
-  //     else if(props.includes(value.passowrd)==false){
-  //       return false
-  //     }
-  //     return true
-  //   }
-  // },
+  methods: {
+    isValidate(value) {
+      if (value=="abc"){
+        return true
+      }
+      return false
+    }
+  },
   data() {
     return {
       checked: true
     };
-  },
+  }
 };
 </script>
 
@@ -161,6 +168,10 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+}
+
+.login-remember-account-area {
+  display: flex;
 }
 
 .login-go-to-signup-page {

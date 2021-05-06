@@ -1,0 +1,12 @@
+{
+    "fakeusers": [
+        {
+            "username": "abc",
+            "password": "123456"
+        },
+        {
+            "username": "bcd",
+            "password": "654321"
+        }
+    ]
+}

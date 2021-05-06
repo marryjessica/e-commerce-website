@@ -35,11 +35,11 @@ export default {
 <style>
 	/* 快捷导航栏 */
   #head-bar {
-    position: fixed;
+    position: absolute;
     top: 0px;
     left: 0px;
     width: 100%;
-    height: 100px;
+    height: 75px;
     background-color: #5CB2FF;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
  }
@@ -50,17 +50,17 @@ export default {
     box-sizing: content-box;
   }
 
-	#head-bar .head-bar-container {
-		width: 100%;
+  #head-bar .head-bar-container {
+	width: 100%;
     min-width: 1280px;
     box-sizing: border-box;
-    padding: 0 24px;
+    /* padding: 0 24px; */
     margin: 0 auto;
-		height: 75px;
+	height: 75px;
     display: flex;
     -webkit-box-pack: justify;
     justify-content: space-between;
-	}
+  }
 
   #head-bar .head-bar-container .head-bar-container-left {
     -webkit-box-flex: 0;
@@ -121,7 +121,7 @@ export default {
   #head-bar .head-bar-container .head-bar-container-right {
     -webkit-box-flex: 0;
     flex: none;
-    margin-right: 200px;
+    margin-right: 100px;
   }
 
   #head-bar .head-bar-container-others {
@@ -132,7 +132,7 @@ export default {
   #head-bar .head-bar-container-others .head-bar-contact-us-container {
     height: 100%;
     display: inline;
-    margin-right: 150px;
+    margin-right: 50px;
   }
 
   #head-bar .head-bar-container-others .head-bar-contact-us {
@@ -145,7 +145,7 @@ export default {
     padding-top: 10px;
   }
 
-  #head-bar .head-bar-container-others .head-bar-login-container {
+  /* #head-bar .head-bar-container-others .head-bar-login-container {
     height: 100%;
     display: inline;
     margin-right: 100px;
@@ -175,7 +175,7 @@ export default {
     padding: 0 10px;
     font-size: 26px;
     font-weight: bold;
-    padding-top: 10px;
-  }
+    padding-top: 10px; */
+  /* } */
 
 </style>

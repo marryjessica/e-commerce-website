@@ -63,10 +63,12 @@ export default {
     box-sizing: border-box;
     padding: 0 24px;
     margin: 0 auto;
-		height: 75px;
+		height: 60px;
     display: flex;
-    -webkit-box-pack: justify;
     justify-content: space-between;
+    flex-direction: row;
+    align-content: center;
+    align-items: stretch;
 	}
 
   #head-bar .head-bar-container .head-bar-container-left {
@@ -87,7 +89,7 @@ export default {
     height: 100%;
     color: white;
     padding: 0 10px;
-    font-size: 40px;
+    font-size: 38px;
     font-weight: bold;
     padding-top: 10px;
   }
@@ -101,7 +103,7 @@ export default {
   #head-bar .head-bar-search-container {
     width: 100%;
     max-width: 720px;
-    height: 50px;
+    height: 40px;
     line-height: 32px;
     margin-top: 13px;
     margin-left: auto;
@@ -111,7 +113,7 @@ export default {
 
   #head-bar .head-bar-search-container .head-bar-search {
   width: 100%;
-  height: 50px;
+  height: 100%;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   font-size: 0;
@@ -120,7 +122,7 @@ export default {
   #head-bar .head-bar-search-container .head-bar-search input{
     font-size: 14px;
     display: inline-block;
-    width: calc(100% - 40px);
+    width: 300px;
     height: 100%;
     line-height:1.5;
     border: 0 none;
@@ -153,18 +155,18 @@ export default {
   #head-bar .head-bar-container .head-bar-container-right {
     -webkit-box-flex: 0;
     flex: none;
-    margin-right: 200px;
+    margin-right: 100px;
   }
 
   #head-bar .head-bar-container-others {
     height: 100%;
-    margin-top: 20px;
+    margin-top: 15px;
   }
 
   #head-bar .head-bar-container-others .head-bar-contact-us-container {
     height: 100%;
     display: inline;
-    margin-right: 150px;
+    margin-right: 50px;
   }
 
   #head-bar .head-bar-container-others .head-bar-contact-us {
@@ -173,7 +175,7 @@ export default {
     height: 100%;
     color: white;
     padding: 0 10px;
-    font-size: 22px;
+    font-size: 16px;
     padding-top: 10px;
   }
 
@@ -186,7 +188,7 @@ export default {
   #head-bar .head-bar-container-others .head-bar-login-container {
     height: 100%;
     display: inline;
-    margin-right: 100px;
+    margin-right: 30px;
   }
 
   #head-bar .head-bar-container-others .head-bar-login {
@@ -195,7 +197,7 @@ export default {
     height: 100%;
     color: white;
     padding: 0 10px;
-    font-size: 26px;
+    font-size: 18px;
     font-weight: bold;
     padding-top: 10px;
   }
@@ -218,7 +220,7 @@ export default {
     height: 100%;
     color: white;
     padding: 0 10px;
-    font-size: 26px;
+    font-size: 18px;
     font-weight: bold;
     padding-top: 10px;
   }

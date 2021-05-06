@@ -1,7 +1,7 @@
 <template>
   <div id="login">
     <el-container class="login-contianer">
-      <el-header class="login-header" style="height: 86px">
+      <el-header class="login-header" style="height: 60px">
         <loginHeader/>
       </el-header>
       <el-main class="login-main">
@@ -56,15 +56,15 @@
   }
 
   #login .login-main-back-container {
-    height: 815px;
+    height: 600px;
     background-image: url('../assets/backimg.png');
   }
 
   #login .login-card {
-    height: 550px;
-    width: 400px;
+    height: 400px;
+    width: 300px;
     position: absolute;
-    top: 200px;
+    top: 170px;
     right: 22%;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
   }

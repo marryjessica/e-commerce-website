@@ -21,7 +21,7 @@
               <span class="head-bar-contact-us" id="head-bar-contact-us"><i class="el-icon-phone-outline"/>联系我们：12345678901</span>
             </div>
             <div class="head-bar-login-container">
-              <router-link class="head-bar-login" id="head-bar-login" to="/login"><i class="el-icon-user"/>登陆</router-link>
+              <router-link class="head-bar-login" id="head-bar-login" :to="{name:'Login'}"><i class="el-icon-user"/>登陆</router-link>
             </div>
             <div class="head-bar-cart-container">
               <router-link class="head-bar-cart" to="/shopping_cart"><i class="el-icon-shopping-cart-1"/>购物车</router-link>

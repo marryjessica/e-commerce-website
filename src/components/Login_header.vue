@@ -10,7 +10,7 @@
         <div class="head-bar-container-middle">
           <div class="head-bar-title-container">
             <div class="head-bar-title">
-              <span>用户登录</span>
+              <span>用户登录/注册</span>
             </div>
           </div>
         </div>
@@ -103,11 +103,13 @@ export default {
   }
 
   #head-bar .head-bar-title-container .head-bar-title {
-  width: 100%;
-  height: 50px;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  font-size: 0;
+    width: 100%;
+    height: 50px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 0;
+    display: flex;
+    justify-content: center;
   }
 
   #head-bar .head-bar-title-container .head-bar-title span {

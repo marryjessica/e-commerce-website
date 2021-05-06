@@ -1,28 +1,29 @@
 <template>
-  <div id="login">
-    <el-container class="login-contianer">
-      <el-header class="login-header" style="height: 60px">
+  <div id="sign">
+    <el-container class="sign-contianer">
+      <el-header class="sign-header" style="height: 60px">
         <loginHeader/>
       </el-header>
-      <el-main class="login-main">
-        <el-container class="login-main-back-container">
-          <el-card class="login-card">
-            <h2>用户登录</h2>
-            <el-form ref="form" class="login-form" :model="form">
+      <el-main class="sign-main">
+        <el-container class="sign-main-back-container">
+          <el-card class="sign-card">
+            <h2>用户注册</h2>
+            <el-form ref="form" class="sign-form" :model="form">
               <el-form-item>
-                <div class="login-input-area">
+                <div class="sign-input-area">
                   <input type="text" placeholder="账号/手机号">
-                  <input type="text" placeholder="Password">
+                  <input type="text" placeholder="6-20位字母、符号或者数字">
+                  <input type="text" placeholder="再次输入密码">
                 </div>
-                <div class="login-remember-account-area">
-                  <el-checkbox v-model="checked">记住账号</el-checkbox>
+                <!-- <div class="sign-remember-account-area">
+                  <el-checkbox v-model="checked">Remember Account</el-checkbox>
+                </div> -->
+                <div class="sign-sign-button-area">
+                  <el-button>注册</el-button>
                 </div>
-                <div class="login-login-button-area">
-                  <el-button>登陆</el-button>
-                </div>
-                <div class="login-other-opts-area">
-                  <el-button type="text">忘记密码</el-button>
-                  <router-link class="login-go-to-signup-page" :to="{name: 'Signup'}">用户注册</router-link>
+                <div class="sign-other-opts-area">
+                  <span>已有账号？</span>
+                  <router-link class="sign-go-to-login-page" :to="{name: 'Login'}">用户登陆</router-link>
                 </div>
                 <!-- <el-input v-model="form.name" placeholder="账号/手机号"></el-input> -->
               </el-form-item>
@@ -43,7 +44,7 @@
   import loginHeader from '@/components/Login_header.vue'
   
   export default {
-  name: 'Login',
+  name: 'Signup',
   components: {
     loginHeader
   },
@@ -57,28 +58,24 @@
 
 <style>
 
-  #login {
+  #sign {
     width: 100%;
     padding: 0;
   }
 
-  /* #login .login-header {
-    height: 86px;
-  } */
-
-  #login .login-main {
+  #sign .sign-main {
     padding: 0;
     padding-top: 7px;
     margin-left: -8px;
     margin-right: -8px;
   }
 
-  #login .login-main-back-container {
+  #sign .sign-main-back-container {
     height: 600px;
     background-image: url('../assets/backimg.png');
   }
 
-  #login .login-card {
+  #sign .sign-card {
     height: 400px;
     width: 300px;
     position: absolute;
@@ -96,7 +93,7 @@
     align-items: stretch;
     }
 
-    .login-go-to-signup-page {
-      text-decoration: none;
+    .sign-go-to-login-page {
+        text-decoration: none;
     }
 </style>

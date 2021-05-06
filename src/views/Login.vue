@@ -31,7 +31,9 @@
           
         </el-container>
       </el-main>
-      <el-footer></el-footer>
+      <el-footer style="height: 100%">
+        <Footer/>
+      </el-footer>
     </el-container>
     
     
@@ -41,11 +43,13 @@
 <script>
   // @ is an alias to /src
   import loginHeader from '@/components/Login_header.vue'
+  import Footer from '@/components/Footer.vue'
   
   export default {
   name: 'Login',
   components: {
-    loginHeader
+    loginHeader,
+    Footer
   },
   data() {
     return {

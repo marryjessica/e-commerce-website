@@ -2,13 +2,7 @@
   <div>
     
     <router-view/>
-    
-    <div id="nav">
-    
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-    <el-button type="primary">主要按钮</el-button>
-  </div>
+
   </div>
   
 </template>

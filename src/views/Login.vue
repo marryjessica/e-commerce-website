@@ -36,7 +36,7 @@
                 <el-checkbox v-model="checked">记住账号</el-checkbox>
               </el-form-item>
               <el-form-item class="login-login-button-area">
-                <el-button class="login-login-button" @click="submitForm">登陆</el-button>
+                <el-button class="login-login-button" @click="submitForm" value="login">登陆</el-button>
               </el-form-item>
               <el-form-item class="login-other-opts-area">
                 <el-button type="text">忘记密码</el-button>
@@ -64,6 +64,7 @@ import loginHeader from "@/components/Login_header.vue";
 import Footer from "@/components/Footer.vue";
 import { reactive, ref, toRefs } from "vue";
 import json from "@/assets/fakeUsers.json";
+import { userLogin } from "@/api/index.js";
 
 export default {
   name: "Login",
@@ -89,11 +90,11 @@ export default {
     });
 
     var fakeusers = json.fakeusers;
-    console.log(fakeusers)
+    console.log(fakeusers[0])
 
     const submitForm = async () => {
       // loginForm.value.validate((valid) => {
-      //   if (valid) {
+        // if (valid) {
           
       //     // this.isValidate(state.ruleForm.username).then(res => {
       //     //   console.log(state.ruleForm.username,res)
@@ -105,7 +106,24 @@ export default {
       //     return false
       //   }
       // })
-      window.location.href = '/'
+      // window.location.href = '/'
+      var params = {
+        username: state.ruleForm.username,
+        password: state.ruleForm.passowrd
+      }
+      console.log("aaaa:",params.username)
+      userLogin(params).then(res => {
+        // if (res.result.state===1){
+          console.log("bbbb:", res)
+        if (res.data===1){
+          this.$router.push({
+            path: '/'
+          })
+        }else {
+
+          return false
+        }
+      })
     };
     
     return {
@@ -121,6 +139,23 @@ export default {
       }
       return false
     }
+  },
+  login() {
+    var params = {
+      username: this.ruleForm.username,
+      password: this.ruleForm.passowrd
+    }
+    userLogin(params).then(res => {
+      // if (res.result.state===1){
+      if (res===1){
+        this.$router.push({
+          path: '/'
+        })
+      }else {
+
+        return false
+      }
+    })
   },
   data() {
     return {

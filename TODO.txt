@@ -1,0 +1,10 @@
+Todo List:
+
+-DONE Install and setup Vue(frontend)
+-DONE Install and setup Flask(backend)
+-DONE Install and setup Element-plus
+-DONE Set up basic template
+-DONE Create login and signup page (cannot login and signup)
+-
+-
+-

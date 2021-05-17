@@ -43,7 +43,7 @@ export default {
 <style>
 	/* 快捷导航栏 */
 	#head-bar {
-    position: fixed;
+    position: absolute;
     top: 0px;
     left: 0px;
 		width: 100%;

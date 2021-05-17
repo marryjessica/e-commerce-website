@@ -8,9 +8,19 @@
         </div>
       </el-header>
       <el-main>
-        <div>
+        <el-row>
+
+        </el-row>
+        <el-row class='middle_area'>
+          <div>
           <img alt="Vue logo" src="../assets/logo.png">
         </div>
+        </el-row>
+        <el-row class='lower_area'>
+          <div class='category_container'>
+
+          </div>
+        </el-row>
       </el-main>
       <el-footer>
         <Footer/>
@@ -34,3 +44,12 @@ export default {
   }
 }
 </script>
+
+<style>
+  .image {
+    margin-top: -1.25rem;
+    margin-right: -1.25rem;
+    margin-left: -1.25rem;
+
+  }
+</style>

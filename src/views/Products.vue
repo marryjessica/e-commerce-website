@@ -21,18 +21,28 @@
             v-for="product in latestProducts"
             :key="product.id"
           >
-            <el-card>
+            <div class="card">
               <figure class="image">
                 <img :src="product.get_thumbnail" alt="缩略图" />
               </figure>
               <div class="product-info">
-                <span class="product-name">{{ product.name }}</span>
-                <span class="product-price" has-text-grey
-                  >¥{{ product.price }}</span
-                >
-                <router-link class='button is-dark mt-4' :to='product.get_absolute_url'>查看</router-link>
+                <div class="product-name-container">
+                  <span class="product-name">{{ product.name }}</span>
+                </div>
+                <div class="product-price-container">
+                  <span class="product-price" has-text-grey
+                    >¥{{ product.price }}</span
+                  >
+                </div>
+                <div class="product-button-container">
+                  <router-link
+                    class="product-button"
+                    :to="product.get_absolute_url"
+                    >查看</router-link
+                  >
+                </div>
               </div>
-            </el-card>
+            </div>
           </el-col>
         </div>
       </el-main>
@@ -82,8 +92,8 @@ export default {
 
 <style>
 .main-body {
-  padding-left: 100px;
-  padding-right: 100px;
+  padding-left: 95px;
+  padding-right: 95px;
 }
 
 .category-name-container {
@@ -93,29 +103,54 @@ export default {
 }
 
 .product-card {
-  height: 300px;
-  width: 250px;
+  height: 320px;
+  width: 225px;
   margin: 10px;
 }
 
-.el-card {
-  height: 100%;
+.product-card .card {
   width: 100%;
+  height: 100%;
+  margin: 0px auto;
+  background-color: white;
+  border: 1px solid #c3c1c1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-.product-info {
+.card .product-info {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: flex-start;
+  margin: 10px;
 }
 
-img {
+.card .product-name-container {
+  height: 45px;
+  text-align: left;
+  line-height: 18px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.card .product-button-container {
+  margin: 10px;
+  margin-left: 0px;
+  text-decoration: none
+}
+
+.card img {
   height: 200px;
-  width: 250px;
+  width: 225px;
 }
 
-figure {
-  margin-bottom: 0;
+.card figure {
+  margin: 0px;
+}
+
+a {
+    text-decoration: none;
 }
 </style>

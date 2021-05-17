@@ -1,13 +1,52 @@
 Todo List:
 
--DONE Install and setup Vue(frontend)
--DONE Install and setup Flask(backend)
--DONE Install and setup Element-plus
--DONE Set up basic template
--DONE Create login and signup page (cannot login and signup)
--DONE Create django app and models for products
--DONE Create serializer and views for the products
--DONE Create simple products page
--View a product
-    -Create viewset in django
-    -Create an vue page for viewing product
+E-Commerce User Part:
+    -DONE Install and setup Vue(frontend)
+    -DONE Install and setup Flask(backend)
+    -DONE Install and setup Element-plus
+    -DONE Set up basic template
+    -DONE Create login and signup page (cannot login and signup)
+    -DONE Create django app and models for products
+    -DONE Create serializer and views for the products
+    -DONE Create simple products page
+    -DONE View a product
+        -Create viewset in django
+        -Create an vue page for viewing product
+    -
+    -
+    -
+    -
+    -
+
+
+E-Commerce Manager Part:
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+
+
+Overall:
+    -User part 
+        -PART 1. Home page
+        -DONE 2. Product list page
+        -PART 3. Product detail page
+        -PART 4. Login/Signup page
+        -5. Shopping cart page
+        -6. Making order page
+        -7. Viewing order page
+        -8. User profile page
+
+    -Manager part
+        -1. User page
+        -2. Product page
+        -3. Order page
+        -4. Permition page
+        -
+        -
+        -

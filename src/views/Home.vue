@@ -46,10 +46,7 @@ export default {
 </script>
 
 <style>
-  .image {
-    margin-top: -1.25rem;
-    margin-right: -1.25rem;
-    margin-left: -1.25rem;
-
-  }
+   .el-main {
+     font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;   
+    }
 </style>

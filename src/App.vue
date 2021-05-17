@@ -1,6 +1,5 @@
 <template>
   <div>
-    
     <router-view/>
 
   </div>
@@ -8,6 +7,32 @@
 </template>
 
 <script>
+  export default {
+    data() {
+      return {
+        cart: {
+          items: []
+        }
+      }
+    },
+    beforeCreate() {
+      this.$store.commit('initializeStore')
+    },
+    mounted() {
+      this.cart = this.$store.state.cart
+    },
+    computed: {
+      cartTotalLength() {
+        let totalLength = 0;
+
+        for (var i = 0; i < this.cart.items.length; i++){
+          totalLength += this.cart.items[i].quantity
+        }
+
+        return totalLength
+      }
+    }
+  }
 
 </script>
 
@@ -32,4 +57,5 @@
 #nav a.router-link-exact-active {
   color: #42b983;
 }
+
 </style>

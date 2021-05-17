@@ -12,8 +12,11 @@ E-Commerce User Part:
     -DONE View a product
         -Create viewset in django
         -Create an vue page for viewing product
-    -
-    -
+    -DONE Set opp Vuex/State
+    -Make it possible to add to cart
+        -DONE Add functionality to vuex
+        -Initialize store in App.vue
+        -Add button to product page
     -
     -
     -

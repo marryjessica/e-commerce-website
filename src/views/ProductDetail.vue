@@ -4,7 +4,7 @@
             <el-header>
                 <Header/>
             </el-header>
-            <el-main class='main-body'>
+            <el-main class='main-body' v-loading='this.$store.state.isLoading'>
                 <el-breadcrumb separator-class="el-icon-arrow-right">
                     <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
                     <el-breadcrumb-item :to="{ path: '/products' }">{{ this.$route.params.category_slug }}</el-breadcrumb-item>
@@ -61,7 +61,7 @@ export default {
     data() {
         return {
             product: {},
-            quantity: 1
+            quantity: 1,
         }
     },
     mounted() {
@@ -69,13 +69,15 @@ export default {
 
     },
     methods: {
-        getProduct() {
+        async getProduct() {
+            this.$store.commit('setIsLoading', true)
+
             const category_slug = this.$route.params.category_slug
             const product_slug = this.$route.params.product_slug
 
             console.log(category_slug)
             console.log(product_slug)
-            axios
+            await axios
                 .get(`http://127.0.0.1:8000/api/v1/products/${category_slug}/${product_slug}`)
                 .then((res) => {
                     console.log(res.data)
@@ -84,6 +86,8 @@ export default {
                 .catch((error) => {
                     console.log(error)
                 })
+    
+            this.$store.commit('setIsLoading', false)
         },
         addToCart() {
             if (isNaN(this.quantity) || this.quantity < 1) {

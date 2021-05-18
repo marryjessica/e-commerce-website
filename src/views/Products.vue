@@ -6,7 +6,7 @@
           <Header />
         </div>
       </el-header>
-      <el-main class="main-body">
+      <el-main class="main-body" v-loading="this.$store.state.isLoading">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
           <el-breadcrumb-item>石材</el-breadcrumb-item>
@@ -75,8 +75,10 @@ export default {
     this.getLatestProducts();
   },
   methods: {
-    getLatestProducts() {
-      axios
+    async getLatestProducts() {
+      this.$store.commit("setIsLoading", true);
+
+      await axios
         .get("/api/v1/latest-products/")
         .then((res) => {
           this.latestProducts = res.data;
@@ -85,6 +87,8 @@ export default {
         .catch((error) => {
           console.log("error:", error);
         });
+
+      this.$store.commit("setIsLoading", false);
     },
   },
 };
@@ -138,7 +142,7 @@ export default {
 .card .product-button-container {
   margin: 10px;
   margin-left: 0px;
-  text-decoration: none
+  text-decoration: none;
 }
 
 .card img {
@@ -151,6 +155,6 @@ export default {
 }
 
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 </style>

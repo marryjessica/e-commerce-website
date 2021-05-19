@@ -57,7 +57,7 @@
               >
             </div>
             <div class="head-bar-cart-container">
-              <router-link class="head-bar-cart" to="/shopping_cart"
+              <router-link class="head-bar-cart" to="/shopping-cart"
                 ><i class="el-icon-shopping-cart-1" />购物车<span
                   >({{ cartTotalLength }})</span
                 ></router-link

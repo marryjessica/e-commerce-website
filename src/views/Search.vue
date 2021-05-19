@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="search-page">
     <el-header>
       <Header />
     </el-header>
@@ -51,7 +51,7 @@
 // @ is an alias to /src
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
-import axios from 'axios';
+import axios from "axios";
 
 export default {
   name: "Search",
@@ -66,38 +66,37 @@ export default {
     };
   },
   mounted() {
-    document.title = "搜索结果"
+    document.title = "搜索结果";
 
-    let uri = window.location.search.substring(1)
-    let params = new URLSearchParams(uri)
+    let uri = window.location.search.substring(1);
+    let params = new URLSearchParams(uri);
 
-    if (params.get('query')) {
-        this.query = params.get('query')
-        this.makeSearch()
+    if (params.get("query")) {
+      this.query = params.get("query");
+      this.makeSearch();
     }
-    
   },
   methods: {
-      async makeSearch() {
-          this.$store.commit('setIsLoading', true)
+    async makeSearch() {
+      this.$store.commit("setIsLoading", true);
 
-          await axios
-            .post('api/v1/products/search/', {'query': this.query})
-            .then(res => {
-                this.products = res.data
-            })
-            .catch(error => {
-                console.log(error)
-            })
-          
-          this.$store.commit('setIsLoading', false)
-      }
+      await axios
+        .post("api/v1/products/search/", { query: this.query })
+        .then((res) => {
+          this.products = res.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      this.$store.commit("setIsLoading", false);
+    },
   },
 };
 </script>
 
 <style>
-    .product-card {
+.product-card {
   height: 320px;
   width: 225px;
   margin: 10px;

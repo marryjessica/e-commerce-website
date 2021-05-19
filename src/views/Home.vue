@@ -49,4 +49,9 @@ export default {
    .el-main {
      font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;   
     }
+
+    .main-body {
+  padding-left: 95px;
+  padding-right: 95px;
+}
 </style>

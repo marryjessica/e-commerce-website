@@ -19,8 +19,9 @@ E-Commerce User Part:
         -Add button to product page
         -Show a toast message
     -DONE Set loading message 
-    -
-    -
+    -DONE Set search functionality
+    -Able to view cart
+    -Able to edit cart items
 
 
 E-Commerce Manager Part:

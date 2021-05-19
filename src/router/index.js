@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 
 // import ProductDetail from '../views/ProductDetail.vue'
@@ -41,12 +41,17 @@ const routes = [
     path: '/:category_slug/:product_slug',
     name: 'ProductDetail',
     component: () => import('../views/ProductDetail.vue')
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: () => import('../views/Search.vue')
   }
 
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(process.env.BASE_URL),
   routes
 })
 

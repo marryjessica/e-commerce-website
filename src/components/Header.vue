@@ -9,20 +9,36 @@
         </div>
         <div class="head-bar-container-middle">
           <div class="head-bar-search-container">
+            <!-- <form method="get" action="/search">
+              <div class="field has-addons">
+                <div class="control">
+                  <input type="text" class="input" placeholder="What are you looking for?" name="query">
+                </div>
+
+                <div class="control">
+                  <button class="button">
+                      搜索
+                  </button>
+                </div>
+              </div>
+            </form> -->
+            <form method='get' action="/search">
             <div class="head-bar-search">
               <input
                 id="head-bar-search-input"
                 type="text"
                 autocomplete="off"
-                value
+                name='query'
                 placeholder="搜索"
               />
-              <el-button
+              <button
                 class="head-bar-search-button"
                 id="head-bar-search-button"
-                >搜索</el-button
+                >搜索</button
               >
             </div>
+            </form>
+            
           </div>
         </div>
         <div class="head-bar-container-right">
@@ -181,7 +197,7 @@ export default {
   border-radius: 4px 0 0 4px;
 }
 
-#head-bar .head-bar-search-container .head-bar-search .head-bar-search-button {
+/* #head-bar .head-bar-search-container .head-bar-search .head-bar-search-button {
   display: inline-block;
   width: 40px;
   height: 100%;
@@ -195,7 +211,7 @@ export default {
   cursor: pointer;
   -webkit-transition: all 0.2s ease-in;
   transition: all 0.2s ease-in;
-}
+} */
 
 #head-bar .head-bar-container .head-bar-container-right {
   -webkit-box-flex: 0;

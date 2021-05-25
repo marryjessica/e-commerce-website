@@ -48,7 +48,14 @@
                 ><i class="el-icon-phone-outline" />联系我们：12345678901</span
               >
             </div>
-            <div class="head-bar-login-container">
+            <div v-if="$store.state.isAuthenticated" class="head-bar-login-container">
+                <router-link 
+                class="head-bar-login"
+                id="head-bar-login"
+                :to="{ name: 'Login' }"
+                >My account</router-link>
+            </div>
+            <div v-else class="head-bar-login-container">
               <router-link
                 class="head-bar-login"
                 id="head-bar-login"
@@ -71,7 +78,11 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
+
+
   name: "Header",
   data() {
     return {
@@ -82,6 +93,13 @@ export default {
   },
   beforeCreate() {
     this.$store.commit("initializeStore");
+
+    const token = this.$store.state.token
+    if (token) {
+        axios.defaults.headers.common['Authorization'] = "Token " + token
+    } else {
+        axios.defaults.headers.common['Authorization'] = ""
+    }
   },
   mounted() {
     this.cart = this.$store.state.cart;
@@ -91,7 +109,7 @@ export default {
       let totalLength = 0;
 
       for (var i = 0; i < this.cart.items.length; i++) {
-        totalLength += this.cart.items[i].quantity;
+        totalLength += parseInt(this.cart.items[i].quantity);
       }
 
       return totalLength;

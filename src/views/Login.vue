@@ -8,30 +8,61 @@
         <el-container class="login-main-back-container">
           <el-card class="login-card">
             <h2>用户登录</h2>
-            <!-- <h2>{msg[0].username}</h2> -->
+           <form @submit.prevent="submitForm">
+                    <div class="field">
+                        <label>Username</label>
+                        <div class="control">
+                            <input type="text" class="input" v-model="mobile">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Password</label>
+                        <div class="control">
+                            <input type="password" class="input" v-model="password">
+                        </div>
+                    </div>
+
+                    <div class="notification is-danger" v-if="errors.length">
+                        <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-dark">Log in</button>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    Or <router-link to="/signup">click here</router-link> to sign up!
+                </form>
+<!-- 
+
+
             <el-form
               class="login-form"
               :model="ruleForm"
               :rules="rules"
               ref="loginForm"
             >
-              <el-form-item prop="username">
+              <el-form-item prop="mobile">
                 <el-input
                   type="text"
-                  v-model.trim="ruleForm.username"
+                  v-model.trim="ruleForm.mobile"
                   placeholder="账号/手机号"
                 ></el-input>
               </el-form-item>
-              <!-- <div class="login-input-area"> -->
+              
               <el-form-item prop="password">
                 <el-input
-                  type="text"
+                  type="password"
                   v-model.trim="ruleForm.password"
                   placeholder="密码"
                 ></el-input>
               </el-form-item>
 
-              <!-- </div> -->
+              
               <el-form-item class="login-remember-account-area">
                 <el-checkbox v-model="checked">记住账号</el-checkbox>
               </el-form-item>
@@ -46,8 +77,20 @@
                   >用户注册</router-link
                 >
               </el-form-item>
-              <!-- <el-input v-model="form.name" placeholder="账号/手机号"></el-input> -->
-            </el-form>
+              
+            </el-form> -->
+            <!-- <form @submit.prevent="submitForm">
+              <div class="login-area">
+                <input type="text" v-model="ruleForm.mobile" placeholder="手机号">
+                
+                <input type="password" v-model="ruleForm.password" placeholder="密码">
+                <button>登陆</button>
+              </div>
+              <div>
+
+              </div>
+
+            </form> -->
           </el-card>
         </el-container>
       </el-main>
@@ -62,9 +105,10 @@
 // @ is an alias to /src
 import loginHeader from "@/components/Login_header.vue";
 import Footer from "@/components/Footer.vue";
-import { reactive, ref, toRefs } from "vue";
-import json from "@/assets/fakeUsers.json";
-import { userLogin } from "@/api/index.js";
+import axios from 'axios';
+// import { reactive, ref, toRefs } from "vue";
+// import json from "@/assets/fakeUsers.json";
+// import { userLogin } from "@/api/index.js";
 
 export default {
   name: "Login",
@@ -72,96 +116,204 @@ export default {
     loginHeader,
     Footer,
   },
-  setup() {
-    const loginForm = ref(null);
-    const state = reactive({
-      ruleForm: {
-        username: "",
-        passowrd: "",
-      },
-      rules: {
-        username: [
-          { required: "true", message: "账户不能为空", trigger: "blur" },
-        ],
-        password: [
-          { required: "true", message: "密码不能为空", trigger: "blur" },
-        ],
-      },
-    });
-
-    var fakeusers = json.fakeusers;
-    console.log(fakeusers[0])
-
-    const submitForm = async () => {
-      // loginForm.value.validate((valid) => {
-        // if (valid) {
-          
-      //     // this.isValidate(state.ruleForm.username).then(res => {
-      //     //   console.log(state.ruleForm.username,res)
-      //     //   window.location.href = '/'
-      //     // })
-      //   }
-      //   else {
-      //     console.log('submit error')
-      //     return false
-      //   }
-      // })
-      // window.location.href = '/'
-      var params = {
-        username: state.ruleForm.username,
-        password: state.ruleForm.passowrd
-      }
-      console.log("aaaa:",params.username)
-      userLogin(params).then(res => {
-        // if (res.result.state===1){
-          console.log("bbbb:", res)
-        if (res.data===1){
-          this.$router.push({
-            path: '/'
-          })
-        }else {
-
-          return false
+    data() {
+        return {
+            mobile: '',
+            password: '',
+            errors: []
         }
-      })
-    };
-    
-    return {
-      ...toRefs(state),
-      loginForm,
-      submitForm
+    },
+    mounted() {
+        document.title = 'Log In | Djackets'
+    },
+    methods: {
+        async submitForm() {
+            axios.defaults.headers.common["Authorization"] = ""
+            localStorage.removeItem("token")
+            const formData = {
+                mobile: this.mobile,
+                password: this.password
+            }
+            await axios
+                .post("/api/v1/token/login/", formData)
+                .then(response => {
+                    const token = response.data.auth_token
+                    this.$store.commit('setToken', token)
+                    
+                    axios.defaults.headers.common["Authorization"] = "Token " + token
+                    // localStorage.setItem("token", token)
+                    const toPath = this.$route.query.to || '/'
+                    this.$router.push(toPath)
+                })
+                .catch(error => {
+                    if (error.response) {
+                        for (const property in error.response.data) {
+                            this.errors.push(`${property}: ${error.response.data[property]}`)
+                        }
+                    } else {
+                        this.errors.push('Something went wrong. Please try again')
+                        
+                        console.log(JSON.stringify(error))
+                    }
+                })
+        }
     }
-  },
-  methods: {
-    isValidate(value) {
-      if (value=="abc"){
-        return true
-      }
-      return false
-    }
-  },
-  login() {
-    var params = {
-      username: this.ruleForm.username,
-      password: this.ruleForm.passowrd
-    }
-    userLogin(params).then(res => {
-      // if (res.result.state===1){
-      if (res===1){
-        this.$router.push({
-          path: '/'
-        })
-      }else {
 
-        return false
-      }
-    })
-  },
-  data() {
-    return {
-      checked: true
-    };
-  }
+
+
+//   data() {
+//       return {
+//         checked: true,
+//         ruleForm: {
+//           mobile: '',
+//           password: ''
+//         }
+//       }
+//     },
+
+// //   data() {
+// //     return {
+// //       mobile: '',
+// //       password: '',
+// //       errors: []
+// //     }
+// //   },
+// //   mounted() {
+// //         document.title = 'Log In | Djackets'
+// //     },
+// //     methods: {
+// //         async submitForm() {
+// //             axios.defaults.headers.common["Authorization"] = ""
+// //             localStorage.removeItem("token")
+// //             const formData = {
+// //                 mobile: this.mobile,
+// //                 password: this.password
+// //             }
+// //             await axios
+// //                 .post("/api/v1/token/login/", formData)
+// //                 .then(response => {
+// //                     const token = response.data.auth_token
+// //                     this.$store.commit('setToken', token)
+                    
+// //                     axios.defaults.headers.common["Authorization"] = "Token " + token
+// //                     localStorage.setItem("token", token)
+// //                     const toPath = this.$route.query.to || '/shopping-cart'
+// //                     this.$router.push(toPath)
+// //                 })
+// //                 .catch(error => {
+// //                     if (error.response) {
+// //                         for (const property in error.response.data) {
+// //                             this.errors.push(`${property}: ${error.response.data[property]}`)
+// //                         }
+// //                     } else {
+// //                         this.errors.push('Something went wrong. Please try again')
+                        
+// //                         console.log(JSON.stringify(error))
+// //                     }
+// //                 })
+// //         }
+// //     }
+// // }
+
+
+//   // setup() {
+//   //   const loginForm = ref(null);
+//   //   const state = reactive({
+//   //     ruleForm: {
+//   //       mobile: "",
+//   //       passowrd: "",
+//   //     },
+//   //     rules: {
+//   //       mobile: [
+//   //         { required: "true", message: "账户不能为空", trigger: "blur" },
+//   //       ],
+//   //       password: [
+//   //         { required: "true", message: "密码不能为空", trigger: "blur" },
+//   //       ],
+//   //     },
+//   //   });
+
+//   //   const submitForm = async () => {
+//   //     axios.defaults.headers.common["Authorization"] = ""
+//   //     loginForm.value.validate((valid) => {
+//   //       if (valid) {
+//   //         const _this = this
+//   //         axios.post('/api/v1/token/login/', {
+//   //           mobile: state.ruleForm.mobile,
+//   //           password: state.ruleForm.password
+//   //         }).then((res) => {
+//   //           const token = res.data.auth_token
+//   //           _this.$store.commit('setToken', token)
+//   //           axios.defaults.headers.common["Authorization"] = "Token " + token
+//   //           // window.localStorage.setItem('token', JSON.stringify(res))  //储存token在localStorage  需要更改
+//   //           window.location.href = '/'
+//   //         })
+//   //         // .catch(error => {
+//   //         //   if (error.response) {
+//   //         //       for (const property in error.response.data) {
+//   //         //           console.log(`${property}: ${error.response.data[property]}`)
+//   //         //       }
+//   //         //   } else {
+//   //         //       console.log('Something went wrong. Please try again')
+                
+//   //         //       console.log(JSON.stringify(error))
+//   //         // }})
+//   //       } else {
+//   //         console.log('error submit!!')
+//   //         return false;
+//   //       }
+//   //     })
+//   //     // var params = {
+//   //     //   mobile: state.ruleForm.mobile,
+//   //     //   password: state.ruleForm.passowrd
+//   //     // }
+//   //     // console.log("aaaa:",params.mobile)
+//   //     // userLogin(params).then(res => {
+//   //     //   // if (res.result.state===1){
+//   //     //     console.log("bbbb:", res)
+//   //     //   if (res.data===1){
+//   //     //     this.$router.push({
+//   //     //       path: '/'
+//   //     //     })
+//   //     //   }else {
+
+//   //     //     return false
+//   //     //   }
+//   //     // })
+//   //   };
+    
+//   //   return {
+//   //     ...toRefs(state),
+//   //     loginForm,
+//   //     submitForm
+//   //   }
+//   // },
+
+//   methods: {
+//     async submitForm() {
+//       if(this.ruleForm.mobile === "" || this.ruleForm.password === ""){
+//         alert("请输入账号或密码")
+//       } else {
+//         const formData = {
+//           mobile: this.ruleForm.mobile,
+//           password: this.ruleForm.password
+//         }
+
+//         await axios
+//         .post("/api/v1/token/login/", formData)
+//         .then(res => {
+//           console.log(res.data)
+//           const token = res.data.auth_token
+//           this.$store.commit('setToken', token)
+//           this.$router.push('/')
+//         })
+//         .catch(error => {
+//           console.log(error.response)
+//         })
+//       }
+//     }
+//   },
+
 };
 </script>
 
@@ -217,6 +369,11 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+.login-area {
+  display: flex;
+  flex-direction: column;
 }
 
 </style>

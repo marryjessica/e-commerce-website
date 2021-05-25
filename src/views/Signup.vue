@@ -8,7 +8,50 @@
         <el-container class="sign-main-back-container">
           <el-card class="sign-card">
             <h2>用户注册</h2>
-            <el-form
+            <form @submit.prevent="submitForm">
+                    <div class="field">
+                        <label>Username</label>
+                        <div class="control">
+                            <input type="text" class="input" v-model="username">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Mobile</label>
+                        <div class="control">
+                            <input type="number" class="input" v-model="mobile">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Password</label>
+                        <div class="control">
+                            <input type="password" class="input" v-model="password">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Repeat password</label>
+                        <div class="control">
+                            <input type="password" class="input" v-model="re_password">
+                        </div>
+                    </div>
+
+                    <div class="notification is-danger" v-if="errors.length">
+                        <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
+                    </div>
+
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-dark">Sign up</button>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    Or <router-link to="/login">click here</router-link> to log in!
+                </form>
+            <!-- <el-form
               class="sign-form"
               :model="ruleForm"
               :rules="rules"
@@ -23,7 +66,7 @@
                   placeholder="6-20位字母、符号或者数字"
                 ></el-input>
               </el-form-item>
-              <el-form-item class="sign-input-repeat-password">
+              <el-form-item class="sign-input-repeat-password" prop="re_password">
                 <el-input type="text" placeholder="再次输入密码"></el-input>
               </el-form-item>
               <el-form-item class="sign-sign-button">
@@ -37,7 +80,7 @@
                   >用户登陆</router-link
                 >
               </el-form-item>
-            </el-form>
+            </el-form> -->
           </el-card>
         </el-container>
       </el-main>
@@ -53,6 +96,8 @@
 import loginHeader from "@/components/Login_header.vue";
 import Footer from "@/components/Footer.vue";
 
+import axios from 'axios';
+
 export default {
   name: "Signup",
   components: {
@@ -61,9 +106,55 @@ export default {
   },
   data() {
     return {
-      checked: true,
+      username: '',
+      mobile: '',
+      password: '',
+      re_password: '',
+      errors: []
     };
   },
+  methods: {
+        submitForm() {
+            this.errors = []
+            if (this.username === '') {
+                this.errors.push('The username is missing')
+            }
+            if (this.mobile === '') {
+                this.errors.push('The mobile is missing')
+            }
+            if (this.password === '') {
+                this.errors.push('The password is too short')
+            }
+            if (this.password !== this.re_password) {
+                this.errors.push('The passwords doesn\'t match')
+            }
+            if (!this.errors.length) {
+                const formData = {
+                    username: this.username,
+                    mobile: this.mobile,
+                    password: this.password
+                }
+                axios
+                    .post("/api/v1/users/", formData)
+                    .then(res => {
+                        console.log('sign up successfully', res.data)
+                        this.$router.push('/login')
+                    })
+                    .catch(error => {
+                        if (error.response) {
+                            for (const property in error.response.data) {
+                                this.errors.push(`${property}: ${error.response.data[property]}`)
+                            }
+                            console.log(JSON.stringify(error.response.data))
+                        } else if (error.message) {
+                            this.errors.push('Something went wrong. Please try again')
+                            
+                            console.log(JSON.stringify(error))
+                        }
+                    })
+            }
+        }
+  }
 };
 </script>
 

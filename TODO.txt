@@ -20,7 +20,7 @@ E-Commerce User Part:
         -Show a toast message
     -DONE Set loading message 
     -DONE Set search functionality
-    -Able to view cart
+    -DONE Able to view cart
     -Able to edit cart items
 
 

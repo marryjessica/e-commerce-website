@@ -22,9 +22,12 @@
               <el-row v-for="item in cart.items" :key="item.product.id">
                 <tr>
                   <td>
-                    <router-link :to="item.product.get_absolute_url">{{
-                      item.product.name
-                    }}</router-link>
+                    <router-link :to="item.product.get_absolute_url">
+                      <figure class="image">
+                        <img :src="item.product.get_thumbnail" alt="缩略图" />
+                      </figure>
+                      {{ item.product.name }}
+                    </router-link>
                   </td>
                   <td>{{ item.product.price }}</td>
                   <td>
@@ -45,9 +48,9 @@
         </table>
         <p v-else>没有商品</p>
         <div class="cart-summary">
-            <div>全部商品 {{ cart.items.length }} 件</div>
-            <div>总价：¥{{ cartTotalPrice }} 元</div>
-            <el-button>去结算</el-button>
+          <div>全部商品 {{ cart.items.length }} 件</div>
+          <div>总价：¥{{ cartTotalPrice }} 元</div>
+          <el-button>去结算</el-button>
         </div>
       </el-main>
       <el-footer>
@@ -109,26 +112,25 @@ export default {
   computed: {
     cartTotalLength() {
       return this.cart.items.reduce((acc, curVal) => {
-        return (acc += curVal.quantity);
+        return (acc += parseInt(curVal.quantity));
       }, 0);
     },
     cartTotalPrice() {
-        return this.cart.items.reduce((accumulator, current) => {
-            return accumulator += (current.product.price*current.quantity);
-        }, 0);
-    }
+      return this.cart.items.reduce((accumulator, current) => {
+        return (accumulator += parseInt(current.product.price) * parseInt(current.quantity));
+      }, 0);
+    },
   },
 };
 </script>
 
 <style>
 .cart-summary {
-    height: 50px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
-
 </style>

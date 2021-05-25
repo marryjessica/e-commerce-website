@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from '../store';
 import Home from '../views/Home.vue'
 
 // import ProductDetail from '../views/ProductDetail.vue'
@@ -50,7 +51,18 @@ const routes = [
   {
     path: '/shopping-cart',
     name: 'Cart',
-    component: () => import('../views/Cart.vue')
+    component: () => import('../views/Cart.vue'),
+    meta: {
+      requireLogin: true
+    }
+  },
+  {
+    path: '/user-profile',
+    name: 'UserProfile',
+    component: ()=> import('../views/UserProfile.vue'),
+    meta: {
+      requireLogin: true
+    }
   }
 
 ]
@@ -61,16 +73,10 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.path === '/login') {
-    next();
+  if (to.matched.some(record => record.meta.requireLogin) && !store.state.isAuthenticated) {
+    next({ name: 'Login', query: { to: to.path } })
   } else {
-    let token = localStorage.getItem('token');
- 
-    if (token === 'null' || token === '') {
-      next('/login');
-    } else {
-      next();
-    }
+    next()
   }
 });
 

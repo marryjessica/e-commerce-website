@@ -52,7 +52,7 @@
                 <router-link 
                 class="head-bar-login"
                 id="head-bar-login"
-                :to="{ name: 'Login' }"
+                :to="{ name: 'UserProfile' }"
                 >My account</router-link>
             </div>
             <div v-else class="head-bar-login-container">

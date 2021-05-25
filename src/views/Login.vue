@@ -106,6 +106,8 @@
 import loginHeader from "@/components/Login_header.vue";
 import Footer from "@/components/Footer.vue";
 import axios from 'axios';
+
+import { ElMessage } from 'element-plus'
 // import { reactive, ref, toRefs } from "vue";
 // import json from "@/assets/fakeUsers.json";
 // import { userLogin } from "@/api/index.js";
@@ -142,9 +144,16 @@ export default {
                     
                     axios.defaults.headers.common["Authorization"] = "Token " + token
                     // localStorage.setItem("token", token)
+                    
                     const toPath = this.$route.query.to || '/'
                     this.$router.push(toPath)
                 })
+                ElMessage({
+                showClose: true,
+                message: '登陆成功',
+                type: 'success',
+                duration: 1000
+            })
                 .catch(error => {
                     if (error.response) {
                         for (const property in error.response.data) {

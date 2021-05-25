@@ -9,48 +9,48 @@
           <el-card class="sign-card">
             <h2>用户注册</h2>
             <form @submit.prevent="submitForm">
-                    <div class="field">
-                        <label>Username</label>
-                        <div class="control">
-                            <input type="text" class="input" v-model="username">
-                        </div>
-                    </div>
+              <div class="field">
+                <label>Username</label>
+                <div class="control">
+                  <input type="text" class="input" v-model="username" />
+                </div>
+              </div>
 
-                    <div class="field">
-                        <label>Mobile</label>
-                        <div class="control">
-                            <input type="number" class="input" v-model="mobile">
-                        </div>
-                    </div>
+              <div class="field">
+                <label>Mobile</label>
+                <div class="control">
+                  <input type="number" class="input" v-model="mobile" />
+                </div>
+              </div>
 
-                    <div class="field">
-                        <label>Password</label>
-                        <div class="control">
-                            <input type="password" class="input" v-model="password">
-                        </div>
-                    </div>
+              <div class="field">
+                <label>Password</label>
+                <div class="control">
+                  <input type="password" class="input" v-model="password" />
+                </div>
+              </div>
 
-                    <div class="field">
-                        <label>Repeat password</label>
-                        <div class="control">
-                            <input type="password" class="input" v-model="re_password">
-                        </div>
-                    </div>
+              <div class="field">
+                <label>Repeat password</label>
+                <div class="control">
+                  <input type="password" class="input" v-model="re_password" />
+                </div>
+              </div>
 
-                    <div class="notification is-danger" v-if="errors.length">
-                        <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
-                    </div>
+              <div class="notification is-danger" v-if="errors.length">
+                <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
+              </div>
 
-                    <div class="field">
-                        <div class="control">
-                            <button class="button is-dark">Sign up</button>
-                        </div>
-                    </div>
+              <div class="field">
+                <div class="control">
+                  <button class="button is-dark">Sign up</button>
+                </div>
+              </div>
 
-                    <hr>
+              <hr />
 
-                    Or <router-link to="/login">click here</router-link> to log in!
-                </form>
+              Or <router-link to="/login">click here</router-link> to log in!
+            </form>
             <!-- <el-form
               class="sign-form"
               :model="ruleForm"
@@ -85,7 +85,7 @@
         </el-container>
       </el-main>
       <el-footer>
-          <Footer/>
+        <Footer />
       </el-footer>
     </el-container>
   </div>
@@ -96,65 +96,75 @@
 import loginHeader from "@/components/Login_header.vue";
 import Footer from "@/components/Footer.vue";
 
-import axios from 'axios';
+import { ElMessage } from "element-plus";
+
+import axios from "axios";
 
 export default {
   name: "Signup",
   components: {
     loginHeader,
-    Footer
+    Footer,
   },
   data() {
     return {
-      username: '',
-      mobile: '',
-      password: '',
-      re_password: '',
-      errors: []
+      username: "",
+      mobile: "",
+      password: "",
+      re_password: "",
+      errors: [],
     };
   },
   methods: {
-        submitForm() {
-            this.errors = []
-            if (this.username === '') {
-                this.errors.push('The username is missing')
+    submitForm() {
+      this.errors = [];
+      if (this.username === "") {
+        this.errors.push("The username is missing");
+      }
+      if (this.mobile === "") {
+        this.errors.push("The mobile is missing");
+      }
+      if (this.password === "") {
+        this.errors.push("The password is too short");
+      }
+      if (this.password !== this.re_password) {
+        this.errors.push("The passwords doesn't match");
+      }
+      if (!this.errors.length) {
+        const formData = {
+          username: this.username,
+          mobile: this.mobile,
+          password: this.password,
+        };
+        axios
+          .post("/api/v1/users/", formData)
+          .then((res) => {
+            console.log("sign up successfully", res.data);
+            this.$router.push("/login");
+            ElMessage({
+              showClose: true,
+              message: "注册成功",
+              type: "success",
+              duration: 1000,
+            });
+          })
+          .catch((error) => {
+            if (error.response) {
+              for (const property in error.response.data) {
+                this.errors.push(
+                  `${property}: ${error.response.data[property]}`
+                );
+              }
+              console.log(JSON.stringify(error.response.data));
+            } else if (error.message) {
+              this.errors.push("Something went wrong. Please try again");
+
+              console.log(JSON.stringify(error));
             }
-            if (this.mobile === '') {
-                this.errors.push('The mobile is missing')
-            }
-            if (this.password === '') {
-                this.errors.push('The password is too short')
-            }
-            if (this.password !== this.re_password) {
-                this.errors.push('The passwords doesn\'t match')
-            }
-            if (!this.errors.length) {
-                const formData = {
-                    username: this.username,
-                    mobile: this.mobile,
-                    password: this.password
-                }
-                axios
-                    .post("/api/v1/users/", formData)
-                    .then(res => {
-                        console.log('sign up successfully', res.data)
-                        this.$router.push('/login')
-                    })
-                    .catch(error => {
-                        if (error.response) {
-                            for (const property in error.response.data) {
-                                this.errors.push(`${property}: ${error.response.data[property]}`)
-                            }
-                            console.log(JSON.stringify(error.response.data))
-                        } else if (error.message) {
-                            this.errors.push('Something went wrong. Please try again')
-                            
-                            console.log(JSON.stringify(error))
-                        }
-                    })
-            }
-        }
-  }
+          });
+      }
+    },
+  },
 };
 </script>
 
@@ -199,8 +209,8 @@ export default {
 }
 
 .sign-other-opts .el-form-item__content {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 </style>

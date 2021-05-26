@@ -21,7 +21,19 @@ E-Commerce User Part:
     -DONE Set loading message 
     -DONE Set search functionality
     -DONE Able to view cart
-    -Able to edit cart items
+    -DONE Able to edit cart items
+    -Connect user with cart
+        -View user's own cart
+        -Transfer nonlogin cart into user's cart
+        -Able to edit user's own cart items
+            -Increase quantity
+            -Decrease quantity
+            -Add item
+            -Delete item
+    -DONE Able to sign up
+    -DONE Able to log in 
+    -DONE Set authorization for users
+    -Set a life for token
 
 
 E-Commerce Manager Part:

@@ -7,6 +7,8 @@
 </template>
 
 <script>
+// import { mapGetters } from 'vues';
+
   export default {
     data() {
       return {
@@ -20,6 +22,8 @@
     },
     mounted() {
       this.cart = this.$store.state.cart
+      console.log(this.$store.state)
+      
     },
     computed: {
       cartTotalLength() {

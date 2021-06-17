@@ -48,7 +48,7 @@
                 ><i class="el-icon-phone-outline" />联系我们：12345678901</span
               >
             </div>
-            <div v-if="$store.state.isAuthenticated" class="head-bar-login-container">
+            <div v-if="this.$store.state.userInfo.token" class="head-bar-login-container">
                 <router-link 
                 class="head-bar-login"
                 id="head-bar-login"
@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 
 export default {
 
@@ -94,12 +94,12 @@ export default {
   beforeCreate() {
     this.$store.commit("initializeStore");
 
-    const token = this.$store.state.token
-    if (token) {
-        axios.defaults.headers.common['Authorization'] = "Token " + token
-    } else {
-        axios.defaults.headers.common['Authorization'] = ""
-    }
+    // const token = this.$store.state.token
+    // if (token) {
+    //     axios.defaults.headers.common['Authorization'] = "Token " + token
+    // } else {
+    //     axios.defaults.headers.common['Authorization'] = ""
+    // }
   },
   mounted() {
     this.cart = this.$store.state.cart;

@@ -105,9 +105,11 @@
 // @ is an alias to /src
 import loginHeader from "@/components/Login_header.vue";
 import Footer from "@/components/Footer.vue";
-import axios from 'axios';
+import axios from 'axios';  
+import cookie from '@/static/cookie';
 
-import { ElMessage } from 'element-plus'
+
+// import { ElMessage } from 'element-plus'
 // import { reactive, ref, toRefs } from "vue";
 // import json from "@/assets/fakeUsers.json";
 // import { userLogin } from "@/api/index.js";
@@ -129,31 +131,38 @@ export default {
         document.title = 'Log In | Djackets'
     },
     methods: {
-        async submitForm() {
-            axios.defaults.headers.common["Authorization"] = ""
-            localStorage.removeItem("token")
+         submitForm() {
+          var that = this;
+            // axios.defaults.headers.common["Authorization"] = ""
+            // localStorage.removeItem("token")
             const formData = {
-                mobile: this.mobile,
-                password: this.password
+                username: that.mobile,
+                password: that.password
             }
-            await axios
-                .post("/api/v1/token/login/", formData)
-                .then(response => {
-                    const token = response.data.auth_token
-                    this.$store.commit('setToken', token)
+             axios
+                .post("http://127.0.0.1:8000/login/", formData)
+                .then(res => {
+                  console.log('res: ', res)
+
+                  cookie.setCookie('name', that.mobile, 7);
+                  cookie.setCookie('token', res.data.access, 7);
+
+                  // that.$store.dispatch('setInfo')
+                    // const token = response.data.auth_token
+                    this.$store.commit('setToken')
                     
-                    axios.defaults.headers.common["Authorization"] = "Token " + token
-                    // localStorage.setItem("token", token)
+                    // axios.defaults.headers.common["Authorization"] = "Token " + token
+                    // // localStorage.setItem("token", token)
                     
                     const toPath = this.$route.query.to || '/'
                     this.$router.push(toPath)
                 })
-                ElMessage({
-                showClose: true,
-                message: '登陆成功',
-                type: 'success',
-                duration: 1000
-            })
+            //     ElMessage({
+            //     showClose: true,
+            //     message: '登陆成功',
+            //     type: 'success',
+            //     duration: 1000
+            // })
                 .catch(error => {
                     if (error.response) {
                         for (const property in error.response.data) {

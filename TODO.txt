@@ -22,6 +22,11 @@ E-Commerce User Part:
     -DONE Set search functionality
     -DONE Able to view cart
     -DONE Able to edit cart items
+    -DONE Able to sign up
+    -DONE Able to log in 
+    -DONE Set authorization for users
+    -DONE Create my profile page
+    -Show user's info in my profile page
     -Connect user with cart
         -View user's own cart
         -Transfer nonlogin cart into user's cart
@@ -30,9 +35,6 @@ E-Commerce User Part:
             -Decrease quantity
             -Add item
             -Delete item
-    -DONE Able to sign up
-    -DONE Able to log in 
-    -DONE Set authorization for users
     -Set a life for token
 
 
@@ -67,3 +69,11 @@ Overall:
         -
         -
         -
+
+
+Login and User authentication and User data connect:
+    1, django.contrib.auth is to use signal user_logged_in()
+    2, try article "simplejwt track user login active"
+    3, try signals methods in the article. 
+    3, how to refresh token 
+    4, how to log out. 

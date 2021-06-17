@@ -99,6 +99,7 @@ import Footer from "@/components/Footer.vue";
 import { ElMessage } from "element-plus";
 
 import axios from "axios";
+import cookie from "@/static/cookie"
 
 export default {
   name: "Signup",
@@ -112,11 +113,12 @@ export default {
       mobile: "",
       password: "",
       re_password: "",
-      errors: [],
+      errors: []
     };
   },
   methods: {
     submitForm() {
+      var that = this;
       this.errors = [];
       if (this.username === "") {
         this.errors.push("The username is missing");
@@ -132,14 +134,19 @@ export default {
       }
       if (!this.errors.length) {
         const formData = {
-          username: this.username,
-          mobile: this.mobile,
-          password: this.password,
+          username: that.username,
+          mobile: that.mobile,
+          password: that.password,
         };
         axios
-          .post("/api/v1/users/", formData)
+          .post("/users/", formData)
           .then((res) => {
             console.log("sign up successfully", res.data);
+            cookie.setCookie('name', res.data.username);
+            cookie.setCookie('token', res.data.token);
+            
+            that.$store.dispatch('setInfo');
+            
             this.$router.push("/login");
             ElMessage({
               showClose: true,

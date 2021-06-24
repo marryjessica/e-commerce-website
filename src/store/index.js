@@ -64,8 +64,9 @@ import cookie from '@/static/cookie';
 export default createStore({
     state: {
         userInfo: {
-            name:cookie.getCookie('name')||'',
-            token:cookie.getCookie('token')||''
+            name: cookie.getCookie('name')||'',
+            token: cookie.getCookie('token')||'',
+            refresh: localStorage.getItem('refresh')||''
         },
         // goods_list
         cart: {
@@ -75,15 +76,25 @@ export default createStore({
     },
     mutations: {
         setToken(state) {
-            state.userInfo.name = cookie.getCookie('name');
-            state.userInfo.token = cookie.getCookie('token');
+            state.userInfo.name = cookie.getCookie('name')
+            state.userInfo.token = cookie.getCookie('token')
+            state.userInfo.refresh = localStorage.getItem('refresh')
+            // localStorage.setItem('token', JSON.stringify(state.token))
             console.log('getCookie: ', cookie.getCookie('name'))
             console.log('userInfo: ', state.userInfo);
         },
         removeToken(state) {
             state.userInfo.token = ''
+            state.userInfo.refresh = ''
             // state.isAuthenticated = false
             cookie.delCookie('token')
+            cookie.delCookie('name')
+            localStorage.removeItem('refresh')
+        },
+        onlyRemoveToken(state) {
+            state.userInfo.token = ''
+            cookie.delCookie('token')
+            console.log('onlyRemoveToken')
         },
         setIsLoading(state, status) {
             state.isLoading = status

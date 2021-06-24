@@ -52,6 +52,7 @@
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import axios from "axios";
+import cookie from "@/static/cookie";
 
 export default {
   name: "Search",
@@ -64,6 +65,22 @@ export default {
       products: [],
       query: "",
     };
+  },
+  beforeCreate() {
+    var refresh_token = {
+      refresh: localStorage.getItem("refresh"),
+    };
+
+    if (refresh_token.refresh !== null) {
+      axios
+        .post("/login/refresh/", refresh_token)
+        .then((res) => {
+          cookie.delCookie('token')
+          cookie.setCookie("token", res.data.access, 7)
+
+          this.$store.commit("setToken")
+        })
+    }
   },
   mounted() {
     document.title = "搜索结果";
@@ -85,8 +102,8 @@ export default {
         .then((res) => {
           this.products = res.data;
         })
-        .catch((error) => {
-          console.log(error);
+        .catch((err) => {
+          console.log(err.response.data.messages);
         });
 
       this.$store.commit("setIsLoading", false);

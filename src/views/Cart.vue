@@ -7,50 +7,51 @@
         </div>
       </el-header>
       <el-main class="main-body">
-        <table class="cart-table">
-          <thead>
-            <tr>
-              <th>商品信息</th>
-              <th>单价（元）</th>
-              <th>数量</th>
-              <th>小计</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <div v-loading='this.$store.state.isLoading'>
-              <el-row v-for="(item, index) in cart.items" :key="item.goods.id">
-                <tr>
-                  <td>
-                    <router-link :to="item.goods.get_absolute_url">
-                      <figure class="image">
-                        <img :src="item.goods.get_thumbnail" alt="缩略图" />
-                      </figure>
-                      {{ item.goods.name }}
-                    </router-link>
-                  </td>
-                  <td>{{ item.goods.price }}</td>
-                  <td>
-                    {{ item.nums }}
-                    <a @click="decrementQuantity(item)">-</a>
-                    <a @click="incrementQuantity(item)">+</a>
-                  </td>
-                  <td>{{ getItemTotal(item).toFixed(2) }}</td>
-                  <td>
-                    <el-button @click="removeItemFromCart(index, item)"
-                      >删除</el-button
-                    >
-                  </td>
-                </tr>
-              </el-row>
-            </div>
-          </tbody>
-        </table>
-        <!-- <p v-else>没有商品</p> -->
+        <div class="cart-table-area">
+          <table class="cart-table" v-if="cartTotalLength">
+            <thead>
+              <tr>
+                <th>商品信息</th>
+                <th>单价（元）</th>
+                <th>数量</th>
+                <th>小计</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody v-loading="this.$store.state.isLoading">
+              <tr v-for="(item, index) in cart.items" :key="item.goods.id">
+                <td>
+                  <router-link :to="item.goods.get_absolute_url">
+                    <figure class="image">
+                      <img :src="item.goods.get_thumbnail" alt="缩略图" />
+                    </figure>
+                    {{ item.goods.name }}
+                  </router-link>
+                </td>
+                <td>{{ item.goods.price }}</td>
+                <td>
+                  {{ item.nums }}
+                  <el-button @click="decrementQuantity(item)">-</el-button>
+                  <input type="text" v-model.lazy="item.nums" />
+
+                  <el-button @click="incrementQuantity(item)">+</el-button>
+                </td>
+                <td>{{ getItemTotal(item).toFixed(2) }}</td>
+                <td>
+                  <el-button @click="removeItemFromCart(index, item)"
+                    >删除</el-button
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p v-else>没有商品</p>
+        </div>
+
         <div class="cart-summary">
           <div>全部商品 {{ cart.items.length }} 件</div>
           <div>总价：¥{{ cartTotalPrice }} 元</div>
-          <el-button>去结算</el-button>
+          <el-button @click="toCheckOut">去结算</el-button>
         </div>
       </el-main>
       <el-footer>
@@ -64,9 +65,10 @@
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 
-import axios from 'axios';
+import axios from "axios";
 import cookie from "@/static/cookie";
 
+import { ElMessage } from "element-plus";
 
 export default {
   name: "Cart",
@@ -81,36 +83,53 @@ export default {
       },
     };
   },
-  created() {
+  beforeCreate() {
+    var refresh_token = {
+      refresh: localStorage.getItem("refresh"),
+    };
 
+    if (refresh_token.refresh !== null) {
+      axios.post("/login/refresh/", refresh_token).then((res) => {
+        cookie.delCookie("token");
+        cookie.setCookie("token", res.data.access, 7);
+
+        this.$store.commit("setToken");
+      });
+    }
   },
   mounted() {
     // this.cart = this.$store.state.cart;
-    this.getCartItem()
+    this.getCartItem();
   },
   methods: {
-    async getCartItem(){
-      this.$store.commit('setIsLoading', true)
+    async getCartItem() {
+      this.$store.commit("setIsLoading", true);
 
       var token = cookie.getCookie("token");
-      console.log(token);
+      // console.log("tokens: ",token);
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
       await axios
-      .get('/shopcarts/')
-      .then((res) => {
-        console.log("cart: ", res.data[0])
-        // res.data.forEach((val) => {
-        //   console.log("val: ", val.goods)
-        //   this.cart.items.push(val.goods)
-        // })
-        this.cart.items = res.data
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-      this.$store.commit('setIsLoading', false)
-
+        .get("/shopcarts/")
+        .then((res) => {
+          console.log("cart: ", res.data[0]);
+          // res.data.forEach((val) => {
+          //   console.log("val: ", val.goods)
+          //   this.cart.items.push(val.goods)
+          // })
+          this.cart.items = res.data;
+        })
+        .catch((err) => {
+          console.log(err.response);
+          var err_msg = err.response.data.messages[0].message;
+          ElMessage({
+            showClose: true,
+            message: err_msg,
+            type: "error",
+            duration: 1500,
+          });
+        });
+      this.$store.commit("setIsLoading", false);
     },
     getItemTotal(item) {
       return item.goods.price * item.nums;
@@ -119,27 +138,33 @@ export default {
       // item.quantity += 1;
 
       // this.updateCart();
-      console.log('item:', item)
+      console.log("item:", item);
 
-      this.$store.commit('setIsLoading', true)
+      this.$store.commit("setIsLoading", true);
 
       const product_update = {
-        nums: item.nums+1
-      }
+        nums: item.nums + 1,
+      };
 
       axios
-      .patch('shopcarts/'+item.goods.id+'/', product_update)
-      .then((res) => {
-        console.log('update success: ', res)
-        item.nums += 1
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+        .patch("shopcarts/" + item.goods.id + "/", product_update)
+        .then((res) => {
+          console.log("update success: ", res);
+          item.nums += 1;
+        })
+        .catch((err) => {
+          console.log(err.response.data.messages);
+          var err_msg = err.response.data.messages[0].message;
+          ElMessage({
+            showClose: true,
+            message: err_msg,
+            type: "error",
+            duration: 1500,
+          });
+        });
       // console.log('item2:', item)
 
-      this.$store.commit('setIsLoading', false)
-
+      this.$store.commit("setIsLoading", false);
     },
     decrementQuantity(item) {
       // if (item.quantity === 1) {
@@ -149,57 +174,73 @@ export default {
 
       //   this.updateCart();
 
-      console.log('item:', item)
+      console.log("item:", item);
 
-      this.$store.commit('setIsLoading', true)
+      this.$store.commit("setIsLoading", true);
 
-      if(item.nums === 1) {
-        console.log("注意，最少买一个")
+      if (item.nums === 1) {
+        console.log("注意，最少买一个");
       } else {
         const product_update = {
-        nums: item.nums-1
+          nums: item.nums - 1,
+        };
+        axios
+          .patch("shopcarts/" + item.goods.id + "/", product_update)
+          .then((res) => {
+            console.log("update success: ", res);
+            item.nums -= 1;
+          })
+          .catch((err) => {
+            console.log(err.response.data.messages);
+            var err_msg = err.response.data.messages[0].message;
+            ElMessage({
+              showClose: true,
+              message: err_msg,
+              type: "error",
+              duration: 1500,
+            });
+          });
       }
-      axios
-      .patch('shopcarts/'+item.goods.id+'/', product_update)
-      .then((res) => {
-        console.log('update success: ', res)
-        item.nums -= 1
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-      }
-      
+
       // console.log('item2:', item)
 
-      this.$store.commit('setIsLoading', false)
-
+      this.$store.commit("setIsLoading", false);
     },
     removeItemFromCart(index, item) {
       // this.cart.items = this.cart.items.filter(
       //   (i) => i.product.id !== item.product.id
       // );
-      console.log('store.state: ', this.$store.state.cart.items)
-      this.$store.commit('setIsLoading', true)
-      
-      axios
-      .delete('shopcarts/'+item.goods.id+'/')
-      .then((res) => {
-        console.log(res)
-        this.cart.items.splice(index, 1)
-        console.log('store.state: ', this.$store.state.cart.items)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+      console.log("store.state: ", this.$store.state.cart.items);
+      this.$store.commit("setIsLoading", true);
 
-      this.$store.commit('setIsLoading', false)
+      axios
+        .delete("shopcarts/" + item.goods.id + "/")
+        .then((res) => {
+          console.log(res);
+          this.cart.items.splice(index, 1);
+          console.log("store.state: ", this.$store.state.cart.items);
+        })
+        .catch((err) => {
+          console.log(err.response.data.messages);
+          var err_msg = err.response.data.messages[0].message;
+          ElMessage({
+            showClose: true,
+            message: err_msg,
+            type: "error",
+            duration: 1500,
+          });
+        });
+
+      this.$store.commit("setIsLoading", false);
 
       // this.updateCart();
     },
     // updateCart() {
     //   localStorage.setItem("cart", JSON.stringify(this.$store.state.cart));
     // },
+    toCheckOut() {
+      this.$router.push("/check-out/");
+    },
   },
   computed: {
     cartTotalLength() {
@@ -209,7 +250,8 @@ export default {
     },
     cartTotalPrice() {
       return this.cart.items.reduce((accumulator, current) => {
-        return (accumulator += parseInt(current.goods.price) * parseInt(current.nums));
+        return (accumulator +=
+          parseInt(current.goods.price) * parseInt(current.nums));
       }, 0);
     },
   },
@@ -224,5 +266,35 @@ export default {
   justify-content: space-around;
   align-items: center;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.cart-table-area table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.cart-table-area thead {
+  background-color: #67a1ff;
+}
+.cart-table-area th {
+  color: #fff;
+  line-height: 17px;
+  font-weight: normal;
+}
+
+.cart-table-area tbody {
+  background-color: #eaf2ff;
+}
+.cart-table-area td {
+  color: #677998;
+  line-height: 12px;
+}
+
+.cart-table-area th,
+td {
+  width: 60px;
+  padding: 12px 2px;
+  font-size: 12px;
+  text-align: center;
 }
 </style>

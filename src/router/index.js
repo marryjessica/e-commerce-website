@@ -57,6 +57,11 @@ const routes = [
     }
   },
   {
+    path: '/check-out',
+    name: 'CheckOut',
+    component: () => import('../views/CheckOut.vue')
+  },
+  {
     path: '/user-profile',
     name: 'UserProfile',
     component: ()=> import('../views/UserProfile.vue'),

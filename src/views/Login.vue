@@ -143,9 +143,11 @@ export default {
                 .post("http://127.0.0.1:8000/login/", formData)
                 .then(res => {
                   console.log('res: ', res)
-
+                  const refresh = res.data.refresh
+                  
                   cookie.setCookie('name', that.mobile, 7);
                   cookie.setCookie('token', res.data.access, 7);
+                  localStorage.setItem('refresh', refresh);
 
                   // that.$store.dispatch('setInfo')
                     // const token = response.data.auth_token

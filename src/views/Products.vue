@@ -60,6 +60,8 @@ import axios from "axios";
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 
+import cookie from "@/static/cookie";
+
 export default {
   name: "Products",
   data() {
@@ -70,6 +72,22 @@ export default {
   components: {
     Header,
     Footer,
+  },
+  beforeCreate() {
+    var refresh_token = {
+      refresh: localStorage.getItem("refresh"),
+    };
+
+    if (refresh_token.refresh !== null) {
+      axios
+        .post("/login/refresh/", refresh_token)
+        .then((res) => {
+          cookie.delCookie('token')
+          cookie.setCookie("token", res.data.access, 7)
+
+          this.$store.commit("setToken")
+        })
+    }
   },
   mounted() {
     this.getLatestProducts();
@@ -84,8 +102,8 @@ export default {
           this.latestProducts = res.data;
           console.log(res.data);
         })
-        .catch((error) => {
-          console.log("error:", error);
+        .catch((err) => {
+          console.log("error:", err.response.data.messages);
         });
 
       this.$store.commit("setIsLoading", false);

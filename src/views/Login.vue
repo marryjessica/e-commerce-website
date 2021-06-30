@@ -109,7 +109,7 @@ import axios from 'axios';
 import cookie from '@/static/cookie';
 
 
-// import { ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 // import { reactive, ref, toRefs } from "vue";
 // import json from "@/assets/fakeUsers.json";
 // import { userLogin } from "@/api/index.js";
@@ -144,7 +144,7 @@ export default {
                 .then(res => {
                   console.log('res: ', res)
                   const refresh = res.data.refresh
-                  
+
                   cookie.setCookie('name', that.mobile, 7);
                   cookie.setCookie('token', res.data.access, 7);
                   localStorage.setItem('refresh', refresh);
@@ -157,14 +157,15 @@ export default {
                     // // localStorage.setItem("token", token)
                     
                     const toPath = this.$route.query.to || '/'
+                    ElMessage({
+                showClose: true,
+                message: '登陆成功',
+                type: 'success',
+                duration: 1000
+            })
                     this.$router.push(toPath)
                 })
-            //     ElMessage({
-            //     showClose: true,
-            //     message: '登陆成功',
-            //     type: 'success',
-            //     duration: 1000
-            // })
+            //     
                 .catch(error => {
                     if (error.response) {
                         for (const property in error.response.data) {

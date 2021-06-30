@@ -100,13 +100,18 @@ export default {
       refresh: localStorage.getItem("refresh"),
     };
 
-    if (refresh_token.refresh !== null) {
+    this.$store.commit("isTokenExpired")
+
+    if (refresh_token.refresh !== null && this.$store.state.tokenTimeDiff < 1800) {
       axios.post("/login/refresh/", refresh_token).then((res) => {
         cookie.delCookie("token");
         cookie.setCookie("token", res.data.access, 7);
 
         this.$store.commit("setToken");
+        console.log(this.$store.state.tokenTimeDiff)
       });
+    } else {
+      this.$router.push("/login?to=/check-out");
     }
   },
   mounted() {
@@ -119,6 +124,8 @@ export default {
 
       var token = cookie.getCookie("token");
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+
+      console.log('record1: ', axios.defaults.headers.common["Authorization"])
 
       axios
         .get("/shopcarts/")
@@ -144,8 +151,8 @@ export default {
     getUserAddress() {
       this.$store.commit("setIsLoading", true);
 
-      var token = cookie.getCookie("token");
-      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+    //   var token = cookie.getCookie("token");
+    //   axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
       axios
         .get("/user_address/")
@@ -171,8 +178,8 @@ export default {
     CheckOut() {
       this.$store.commit("setIsLoading", true);
 
-      var token = cookie.getCookie("token");
-      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+    //   var token = cookie.getCookie("token");
+    //   axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
       let data = new FormData();
       data.append("address", this.selected_address.id);

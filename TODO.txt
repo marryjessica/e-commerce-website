@@ -26,8 +26,8 @@ E-Commerce User Part:
     -DONE Able to log in 
     -DONE Set authorization for users
     -DONE Create my profile page
-    -Show user's info in my profile page
-    -Connect user with cart
+    -DONE Show user's info in my profile page
+    -DONE Connect user with cart
         -View user's own cart
         -Transfer nonlogin cart into user's cart
         -Able to edit user's own cart items
@@ -35,7 +35,44 @@ E-Commerce User Part:
             -Decrease quantity
             -Add item
             -Delete item
-    -Set a life for token
+    -DONE Set a life for token
+    -Set user fav
+        -Able to add
+        -Able to cancel
+        -DONE Able to view
+    -Set user order
+        -DONE View orders
+        -DONE Add order
+        -Cancel order
+        -Delete order record
+        -Filter orders
+        -Paginate orders
+    -Set user address
+        -DONE Add address
+        -DONE Delete address
+        -DONE Edit address
+        -DONE View address
+        -Set default address
+    -Set user profile
+        -DONE View profile
+        -Update profile
+    -Set shopping cart
+        -Anonymity shopping cart merge to user shopping cart after log in
+        -DONE Add to user shopping cart
+        -DONE Delete from user shopping cart
+        -DONE Vew user shopping cart
+        -Edit product quantity in user shopping cart
+            -DONE Increment quantity
+            -DONE Decrement quantity
+            -Input quantity
+    -Set authorization
+        -DONE Keep login status
+        -DONE Log out if inactive
+        -DONE Keep login if active
+    -Set check out
+        -Select products to check out
+        -No selected product can not check out
+        -Can not return check out page after check out
 
 
 E-Commerce Manager Part:

@@ -88,13 +88,18 @@ export default {
       refresh: localStorage.getItem("refresh"),
     };
 
-    if (refresh_token.refresh !== null) {
+    this.$store.commit("isTokenExpired")
+
+    if (refresh_token.refresh !== null && this.$store.state.tokenTimeDiff < 1800) {
       axios.post("/login/refresh/", refresh_token).then((res) => {
         cookie.delCookie("token");
         cookie.setCookie("token", res.data.access, 7);
 
         this.$store.commit("setToken");
+        console.log(this.$store.state.tokenTimeDiff)
       });
+    } else {
+      this.$router.push("/login?to=/shopping-cart");
     }
   },
   mounted() {
@@ -106,13 +111,14 @@ export default {
       this.$store.commit("setIsLoading", true);
 
       var token = cookie.getCookie("token");
-      // console.log("tokens: ",token);
+      console.log("tokens: ",token);
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
       await axios
         .get("/shopcarts/")
         .then((res) => {
-          console.log("cart: ", res.data[0]);
+          // console.log("cart: ", res.data[0]);
+          
           // res.data.forEach((val) => {
           //   console.log("val: ", val.goods)
           //   this.cart.items.push(val.goods)
@@ -138,7 +144,7 @@ export default {
       // item.quantity += 1;
 
       // this.updateCart();
-      console.log("item:", item);
+      // console.log("item:", item);
 
       this.$store.commit("setIsLoading", true);
 
@@ -148,8 +154,8 @@ export default {
 
       axios
         .patch("shopcarts/" + item.goods.id + "/", product_update)
-        .then((res) => {
-          console.log("update success: ", res);
+        .then(() => {
+          // console.log("update success: ", res);
           item.nums += 1;
         })
         .catch((err) => {
@@ -174,7 +180,7 @@ export default {
 
       //   this.updateCart();
 
-      console.log("item:", item);
+      // console.log("item:", item);
 
       this.$store.commit("setIsLoading", true);
 
@@ -186,8 +192,8 @@ export default {
         };
         axios
           .patch("shopcarts/" + item.goods.id + "/", product_update)
-          .then((res) => {
-            console.log("update success: ", res);
+          .then(() => {
+            // console.log("update success: ", res);
             item.nums -= 1;
           })
           .catch((err) => {
@@ -210,13 +216,13 @@ export default {
       // this.cart.items = this.cart.items.filter(
       //   (i) => i.product.id !== item.product.id
       // );
-      console.log("store.state: ", this.$store.state.cart.items);
+      // console.log("store.state: ", this.$store.state.cart.items);
       this.$store.commit("setIsLoading", true);
 
       axios
         .delete("shopcarts/" + item.goods.id + "/")
-        .then((res) => {
-          console.log(res);
+        .then(() => {
+          // console.log(res);
           this.cart.items.splice(index, 1);
           console.log("store.state: ", this.$store.state.cart.items);
         })

@@ -78,15 +78,18 @@ export default {
       refresh: localStorage.getItem("refresh"),
     };
 
-    if (refresh_token.refresh !== null) {
-      axios
-        .post("/login/refresh/", refresh_token)
-        .then((res) => {
-          cookie.delCookie('token')
-          cookie.setCookie("token", res.data.access, 7)
+    this.$store.commit("isTokenExpired");
 
-          this.$store.commit("setToken")
-        })
+    if (
+      refresh_token.refresh !== null &&
+      this.$store.state.tokenTimeDiff < 1800
+    ) {
+      axios.post("/login/refresh/", refresh_token).then((res) => {
+        cookie.delCookie("token");
+        cookie.setCookie("token", res.data.access, 7);
+
+        this.$store.commit("setToken");
+      });
     }
   },
   mounted() {

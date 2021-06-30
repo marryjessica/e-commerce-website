@@ -79,37 +79,40 @@ export default {
     var refresh_token = {
       refresh: localStorage.getItem("refresh"),
     };
-    console.log(refresh_token)
-    if (refresh_token.refresh !== null) {
-        console.log('here')
+
+    this.$store.commit("isTokenExpired");
+
+    if (
+      refresh_token.refresh !== null &&
+      this.$store.state.tokenTimeDiff < 1800
+    ) {
+      console.log("here");
       axios
         .post("/login/refresh/", refresh_token)
         .then((res) => {
-          cookie.delCookie('token')
-          cookie.setCookie("token", res.data.access, 7)
+          cookie.delCookie("token");
+          cookie.setCookie("token", res.data.access, 7);
 
-          this.$store.commit("setToken")
-          console.log("sdfjlkjojxojci")
+          this.$store.commit("setToken");
+          console.log("sdfjlkjojxojci");
         })
-        .catch(function (error) {
-            console.log("sdfsfsfsfsfd")
-            if (error.response) {
-                
+        .catch(function(error) {
+          console.log("sdfsfsfsfsfd");
+          if (error.response) {
             // Request made and server responded
             console.log(error.response.data);
             console.log(error.response.status);
             console.log(error.response.headers);
-            } else if (error.request) {
+          } else if (error.request) {
             // The request was made but no response was received
             console.log(error.request);
-            } else {
+          } else {
             // Something happened in setting up the request that triggered an Error
-            console.log('Error', error.message);
-            }
-
-        })
+            console.log("Error", error.message);
+          }
+        });
     } else {
-        this.$store.commit("onlyRemoveToken");
+      this.$store.commit("onlyRemoveToken");
     }
   },
   mounted() {
@@ -122,9 +125,6 @@ export default {
       const category_slug = this.$route.params.category_slug;
       const product_slug = this.$route.params.product_slug;
 
-      console.log(category_slug);
-      console.log(product_slug);
-    //   delete axios.defaults.headers.common["Authorization"]
       await axios
         .get(
           `http://127.0.0.1:8000/api/v1/products/${category_slug}/${product_slug}`
@@ -133,22 +133,21 @@ export default {
           console.log(res.data);
           this.product = res.data;
         })
-         .catch(function (error) {
-             console.log(error)
-            if (error.response) {
-                
+        .catch(function(error) {
+          console.log(error);
+          if (error.response) {
             // Request made and server responded
             console.log(error.response.data);
             console.log(error.response.status);
             console.log(error.response.headers);
-            } else if (error.request) {
+          } else if (error.request) {
             // The request was made but no response was received
             console.log(error.request);
-            } else {
+          } else {
             // Something happened in setting up the request that triggered an Error
-            console.log('Error', error.messages);
-            }
-         })
+            console.log("Error", error.messages);
+          }
+        });
       this.$store.commit("setIsLoading", false);
     },
     addToCart() {
@@ -162,7 +161,9 @@ export default {
       };
       this.$store.commit("setIsLoading", true);
 
-      // this.$store.commit('addToCart', item)
+      var token = this.$store.state.userInfo.token;
+      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+
       axios
         .post("/shopcarts/", item)
         .then((res) => {
@@ -175,14 +176,14 @@ export default {
           });
         })
         .catch((err) => {
-          console.log(err.detail);
+          console.log(err.toString());
           ElMessage({
             showClose: true,
             message: "添加购物车失败",
             type: "fail",
             duration: 1000,
           });
-            this.$router.push("/login?to=/shopping-cart");
+          this.$router.push("/login?to=/shopping-cart"); //可行
         });
 
       this.$store.commit("setIsLoading", false);

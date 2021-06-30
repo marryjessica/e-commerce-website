@@ -72,16 +72,47 @@ export default createStore({
         cart: {
             items: []
         },
+        orders: [],
         isLoading: false,
+        tokenTimeDiff: 0,
     },
     mutations: {
+        addToOrder(state) {
+            localStorage.setItem('orders', JSON.stringify(state.orders))
+        },
+        isTokenExpired(state){
+            const recordTime = new Date()
+            const tokenSetTime = parseInt(localStorage.getItem('token_set_time'))
+            if(tokenSetTime === null) {
+                console.log("no token settle")
+            } else {
+                const newTime = recordTime.getTime()
+                console.log(newTime, " - ", tokenSetTime)
+                const timeDiff = (newTime - tokenSetTime)/1000
+                console.log("time diff: ", timeDiff)
+                state.tokenTimeDiff = timeDiff
+                if(timeDiff > 1800) {
+                    console.log("please re-login")
+                }
+            }
+        },
         setToken(state) {
             state.userInfo.name = cookie.getCookie('name')
             state.userInfo.token = cookie.getCookie('token')
             state.userInfo.refresh = localStorage.getItem('refresh')
-            // localStorage.setItem('token', JSON.stringify(state.token))
             console.log('getCookie: ', cookie.getCookie('name'))
             console.log('userInfo: ', state.userInfo);
+
+            var current_time = new Date().getTime()
+            var token_set_time = localStorage.getItem('token_set_time')
+            if(token_set_time === null) {
+                console.log("it is null")
+                localStorage.setItem('token_set_time', JSON.stringify(current_time))
+            } else {
+                console.log("it has time", localStorage['token_set_time'])
+                localStorage['token_set_time'] = current_time
+                console.log("new time", localStorage['token_set_time'])
+            }
         },
         removeToken(state) {
             state.userInfo.token = ''

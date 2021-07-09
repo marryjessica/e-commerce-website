@@ -99,6 +99,17 @@
                   </td>
                   <td>
                     <p>{{ getOrderStatus(order.order_status) }}</p>
+                    <el-button>
+                      查看详情
+                    </el-button>
+                    <!-- <router-link
+                    class="view_order_detail_btn"
+                    :to="product.get_absolute_url"
+                    >查看详情</router-link
+                  > -->
+                    <el-button>
+                      申请取消订单
+                    </el-button>
                   </td>
                 </tr>
               </tbody>
@@ -127,6 +138,9 @@
               v-for="(address, index) in user_address"
               :key="index"
             >
+              <span class="address_default" v-if="address.is_default"
+                >默认地址</span
+              >
               <p>收货人：{{ address.signer_name }}</p>
               <p>电话：{{ address.signer_mobile }}</p>
               <p>
@@ -213,7 +227,9 @@
                     :value="user_address[updateAddressIndex].address"
                   />
                 </p>
-                <el-checkbox v-model="default_address"
+                <el-checkbox
+                  v-model="user_address[updateAddressIndex].is_default"
+                  ref="edit_default"
                   >设为默认地址</el-checkbox
                 >
                 <!-- 设为默认地址未完成 -->
@@ -453,7 +469,38 @@ export default {
         address: this.$refs.edit_address.value,
         signer_name: this.$refs.edit_signer_name.value,
         signer_mobile: this.$refs.edit_signer_mobile.value,
+        is_default: this.user_address[this.updateAddressIndex].is_default,
       };
+      console.log(
+        "defalut: ",
+        this.user_address[this.updateAddressIndex].is_default
+      );
+      console.log("sldjjsdklfsdjflks: ", this.$refs.edit_default.checked);
+
+      for (var i = 0; i < this.user_address.length; i++) {
+        if (
+          this.user_address[i].is_default === true &&
+          i !== this.updateAddressIndex
+        ) {
+          console.log(
+            "----------:",
+            this.user_address[i].is_default,
+            i,
+            this.updateAddressIndex
+          );
+          axios
+            .patch("/user_address/" + this.user_address[i].id + "/", {
+              is_default: false,
+            })
+            .then((res) => {
+              console.log(res);
+              this.getUserAddress();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      }
 
       axios
         .patch(
@@ -595,6 +642,16 @@ export default {
 
 .address_grid p {
   margin: 5px;
+}
+
+.address_grid .address_default {
+  font-size: 12px;
+  border: 1px solid #9c9c9c;
+  padding: 2px;
+  border-radius: 4px;
+  background-color: #ff002d4f;
+  color: grey;
+  float: right;
 }
 
 .address_grid .address_options {

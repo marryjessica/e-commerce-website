@@ -18,7 +18,7 @@
         <div>
           <el-col
             class="product-card"
-            v-for="product in latestProducts"
+            v-for="(product, index) in latestProducts"
             :key="product.id"
           >
             <div class="card">
@@ -40,6 +40,20 @@
                     :to="product.get_absolute_url"
                     >查看</router-link
                   >
+                  <el-button
+                    type="text"
+                    icon="el-icon-star-on"
+                    class="product_fav_button"
+                    v-if="hasFav(product.id)"
+                    @click="delFromFav(product.id, index)"
+                  />
+                  <el-button
+                    type="text"
+                    icon="el-icon-star-off"
+                    class="product_fav_button"
+                    v-else
+                    @click="addToFav(product.id)"
+                  />
                 </div>
               </div>
             </div>
@@ -67,6 +81,7 @@ export default {
   data() {
     return {
       latestProducts: [],
+      favorited_products: [],
     };
   },
   components: {
@@ -94,6 +109,7 @@ export default {
   },
   mounted() {
     this.getLatestProducts();
+    this.getFavProducts();
   },
   methods: {
     async getLatestProducts() {
@@ -111,7 +127,41 @@ export default {
 
       this.$store.commit("setIsLoading", false);
     },
+    async getFavProducts() {
+      var token = cookie.getCookie("token");
+      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+
+      await axios.get("/retrieve_fav_products/").then((res) => {
+        res.data.forEach((fav) => {
+          this.favorited_products.push(fav.goods);
+        });
+        console.log(this.favorited_products);
+      });
+    },
+    addToFav(id) {
+      var token = cookie.getCookie("token");
+      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+
+      axios.post("/user_fav/", { goods: id }).then((res) => {
+        this.favorited_products.push(res.goods);
+        console.log(res);
+      });
+    },
+    delFromFav(id, index) {
+      var token = cookie.getCookie("token");
+      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+
+      axios.delete("/user_fav/"+id+"/").then((res) => {
+        this.favorited_products.splice(index, 1);
+        console.log(res);
+        this.hasFav(id)
+      });
+    },
+    hasFav(id) {
+      return this.favorited_products.includes(id);
+    },
   },
+  computed: {},
 };
 </script>
 
@@ -150,6 +200,7 @@ export default {
   flex-wrap: nowrap;
   align-items: flex-start;
   margin: 10px;
+  width: 91%;
 }
 
 .card .product-name-container {
@@ -161,9 +212,9 @@ export default {
 }
 
 .card .product-button-container {
-  margin: 10px;
-  margin-left: 0px;
+  margin-top: 5px;
   text-decoration: none;
+  width: 100%;
 }
 
 .card img {
@@ -175,7 +226,17 @@ export default {
   margin: 0px;
 }
 
-a {
+.product-button {
   text-decoration: none;
+  float: left;
+  margin-top: 7px;
 }
+
+.product_fav_button {
+  font-size: 30px;
+  padding: 0px;
+  float: right;
+  margin-top: -5px;
+}
+
 </style>

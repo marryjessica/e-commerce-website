@@ -50,17 +50,41 @@
             {{ selected_address.signer_name }}
             {{ selected_address.signer_mobile }}
           </el-row>
+          <el-button @click="swapSelectedAddress">
+            修改收货地址
+          </el-button>
+        </div>
+        <div class="change_address_box" v-if="change_address_box">
+          <div class="change_address">
+              <h3>我的地址</h3>
+            <h4 class="address_option" v-for="(address, index) in user_address" :key="address">
+              <el-radio
+                v-model="selected_address.id"
+                :label="address.id"
+                @click="changeSelectedAddress(index)"
+                >{{
+                  address.province +
+                    "省" +
+                    address.city +
+                    "市" +
+                    address.district +
+                    "区" +
+                    address.address
+                }}</el-radio
+              >
+            </h4>
+            <el-button @click="swapSelectedAddress">确定</el-button>
+          </div>
         </div>
         <div>
           <el-button @click="CheckOut">下单</el-button>
         </div>
         <div class="order_success_box" v-if="order_success">
-            <div class="order_success_box_content">
-                <h2>下单成功</h2>
+          <div class="order_success_box_content">
+            <h2>下单成功</h2>
             <el-button>继续购物</el-button>
             <el-button>查看订单</el-button>
-            </div>
-            
+          </div>
         </div>
       </el-main>
       <el-footer>
@@ -93,6 +117,7 @@ export default {
       user_address: [],
       selected_address: {},
       order_success: false,
+      change_address_box: false,
     };
   },
   beforeCreate() {
@@ -100,15 +125,18 @@ export default {
       refresh: localStorage.getItem("refresh"),
     };
 
-    this.$store.commit("isTokenExpired")
+    this.$store.commit("isTokenExpired");
 
-    if (refresh_token.refresh !== null && this.$store.state.tokenTimeDiff < 1800) {
+    if (
+      refresh_token.refresh !== null &&
+      this.$store.state.tokenTimeDiff < 1800
+    ) {
       axios.post("/login/refresh/", refresh_token).then((res) => {
         cookie.delCookie("token");
         cookie.setCookie("token", res.data.access, 7);
 
         this.$store.commit("setToken");
-        console.log(this.$store.state.tokenTimeDiff)
+        console.log(this.$store.state.tokenTimeDiff);
       });
     } else {
       this.$router.push("/login?to=/check-out");
@@ -125,10 +153,10 @@ export default {
       var token = cookie.getCookie("token");
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
-      console.log('record1: ', axios.defaults.headers.common["Authorization"])
+      console.log("record1: ", axios.defaults.headers.common["Authorization"]);
 
       axios
-        .get("/shopcarts/")
+        .get("/shopcartitemselected/")
         .then((res) => {
           this.cart.items = res.data;
         })
@@ -151,8 +179,8 @@ export default {
     getUserAddress() {
       this.$store.commit("setIsLoading", true);
 
-    //   var token = cookie.getCookie("token");
-    //   axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+      //   var token = cookie.getCookie("token");
+      //   axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
       axios
         .get("/user_address/")
@@ -175,15 +203,23 @@ export default {
         }
       });
     },
+    swapSelectedAddress() {
+      this.change_address_box = !this.change_address_box;
+    },
+    changeSelectedAddress(index) {
+      this.selected_address = this.user_address[index];
+    },
     CheckOut() {
       this.$store.commit("setIsLoading", true);
 
-    //   var token = cookie.getCookie("token");
-    //   axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+      //   var token = cookie.getCookie("token");
+      //   axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
       let data = new FormData();
       data.append("address", this.selected_address.id);
-    
+
+      console.log("======: ", data);
+
       axios
         .post("/user_orders/", data)
         .then((res) => {
@@ -198,7 +234,7 @@ export default {
           this.order_success = true;
         })
         .catch((err) => {
-          console.log(err.messages[0].message);
+          console.log(err);
           ElMessage({
             showClose: true,
             message: "因为未知错误，下单失败",
@@ -229,7 +265,7 @@ export default {
 
 <style>
 .order_success_box {
-   position: fixed;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -238,7 +274,7 @@ export default {
 }
 
 .order_success_box_content {
-    width: 500px;
+  width: 500px;
   height: 300px;
   padding: 20px;
   background-color: #fff;
@@ -249,4 +285,28 @@ export default {
   margin-left: -250px;
 }
 
+.change_address_box {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 0, 0, 0.5);
+}
+
+.change_address_box .change_address {
+  width: 500px;
+  height: 300px;
+  padding: 20px;
+  background-color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -150px;
+  margin-left: -250px;
+}
+
+.change_address_box .change_address .address_option span{
+    font-size: 16px;
+}
 </style>

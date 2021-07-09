@@ -37,9 +37,10 @@ E-Commerce User Part:
             -Delete item
     -DONE Set a life for token
     -Set user fav
-        -Able to add
-        -Able to cancel
+        -DONE Able to add
+        -DONE Able to cancel
         -DONE Able to view
+        -Show fav status on product
     -Set user order
         -DONE View orders
         -DONE Add order
@@ -47,12 +48,12 @@ E-Commerce User Part:
         -Delete order record
         -Filter orders
         -Paginate orders
-    -Set user address
+    -DONE Set user address
         -DONE Add address
         -DONE Delete address
         -DONE Edit address
         -DONE View address
-        -Set default address
+        -DONE Set default address
     -Set user profile
         -DONE View profile
         -Update profile
@@ -61,19 +62,21 @@ E-Commerce User Part:
         -DONE Add to user shopping cart
         -DONE Delete from user shopping cart
         -DONE Vew user shopping cart
-        -Edit product quantity in user shopping cart
+        -DONE Edit product quantity in user shopping cart
             -DONE Increment quantity
             -DONE Decrement quantity
-            -Input quantity
+            -DONE Input quantity
     -Set authorization
         -DONE Keep login status
         -DONE Log out if inactive
         -DONE Keep login if active
     -Set check out
+        -DONE Change shipping address
         -Select products to check out
         -No selected product can not check out
         -Can not return check out page after check out
-
+    -Set category
+        -Set different category show products which is that category
 
 E-Commerce Manager Part:
     -

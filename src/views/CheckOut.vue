@@ -56,8 +56,12 @@
         </div>
         <div class="change_address_box" v-if="change_address_box">
           <div class="change_address">
-              <h3>我的地址</h3>
-            <h4 class="address_option" v-for="(address, index) in user_address" :key="address">
+            <h3>我的地址</h3>
+            <h4
+              class="address_option"
+              v-for="(address, index) in user_address"
+              :key="address"
+            >
               <el-radio
                 v-model="selected_address.id"
                 :label="address.id"
@@ -77,13 +81,14 @@
           </div>
         </div>
         <div>
-          <el-button @click="CheckOut">下单</el-button>
+          <el-button v-if="this.cart.items.length" @click="CheckOut">下单</el-button>
+          <el-button v-else disabled="true">下单</el-button>
         </div>
         <div class="order_success_box" v-if="order_success">
           <div class="order_success_box_content">
             <h2>下单成功</h2>
-            <el-button>继续购物</el-button>
-            <el-button>查看订单</el-button>
+            <el-button :to="{ name: 'Home' }">继续购物</el-button>
+            <router-link :to="{ name: 'UserProfile' }">查看订单</router-link>
           </div>
         </div>
       </el-main>
@@ -210,41 +215,48 @@ export default {
       this.selected_address = this.user_address[index];
     },
     CheckOut() {
-      this.$store.commit("setIsLoading", true);
-
-      //   var token = cookie.getCookie("token");
-      //   axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-
-      let data = new FormData();
-      data.append("address", this.selected_address.id);
-
-      console.log("======: ", data);
-
-      axios
-        .post("/user_orders/", data)
-        .then((res) => {
-          console.log("res data: ", res.data);
-          ElMessage({
-            showClose: true,
-            message: "恭喜！成功下单",
-            type: "success",
-            duration: 1000,
-          });
-          console.log("下单成功");
-          this.order_success = true;
-        })
-        .catch((err) => {
-          console.log(err);
-          ElMessage({
-            showClose: true,
-            message: "因为未知错误，下单失败",
-            type: "danger",
-            duration: 1000,
-          });
-          console.log("下单失败");
+      if (this.cart.items.length === 0) {
+        ElMessage({
+          showClose: true,
+          message: "下单失败",
+          type: "error",
+          duration: 1000,
         });
+      } else {
+        this.$store.commit("setIsLoading", true);
 
-      this.$store.commit("setIsLoading", false);
+        //   var token = cookie.getCookie("token");
+        //   axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+
+        let data = new FormData();
+        data.append("address", this.selected_address.id);
+
+        axios
+          .post("/user_orders/", data)
+          .then((res) => {
+            console.log("res data: ", res.data);
+            ElMessage({
+              showClose: true,
+              message: "恭喜！成功下单",
+              type: "success",
+              duration: 1000,
+            });
+            console.log("下单成功");
+            this.order_success = true;
+          })
+          .catch((err) => {
+            console.log(err);
+            ElMessage({
+              showClose: true,
+              message: "因为未知错误，下单失败",
+              type: "danger",
+              duration: 1000,
+            });
+            console.log("下单失败");
+          });
+
+        this.$store.commit("setIsLoading", false);
+      }
     },
   },
   computed: {
@@ -264,6 +276,11 @@ export default {
 </script>
 
 <style>
+.main-body {
+  padding-left: 7%;
+  padding-right: 8%;
+}
+
 .order_success_box {
   position: fixed;
   top: 0;
@@ -306,7 +323,7 @@ export default {
   margin-left: -250px;
 }
 
-.change_address_box .change_address .address_option span{
-    font-size: 16px;
+.change_address_box .change_address .address_option span {
+  font-size: 16px;
 }
 </style>

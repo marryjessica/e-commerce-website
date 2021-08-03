@@ -1,4 +1,4 @@
-<template>
+<template id="core">
   <div class="cart-page">
     <el-container>
       <el-header>
@@ -7,44 +7,7 @@
         </div>
       </el-header>
       <el-main class="main-body">
-        <div class="cart-table-area">
-          <!-- <table class="cart-table" v-if="cartTotalLength">
-            <thead>
-              <tr>
-                <th>商品信息</th>
-                <th>单价（元）</th>
-                <th>数量</th>
-                <th>小计</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody v-loading="this.$store.state.isLoading">
-              <tr v-for="(item, index) in cart.items" :key="item">
-                <td>
-                  <router-link :to="item.good_url">
-                    <figure class="image">
-                      <img :src="item.good_thumbnail" alt="缩略图" />
-                    </figure>
-                    {{ item.good_name }}
-                  </router-link>
-                </td>
-                <td>{{ item.good_price }}</td>
-                <td>
-                  {{ item.nums }}
-                  <el-button @click="decrementQuantity(item)">-</el-button>
-                  <input type="text" v-model.lazy="item.nums" />
-
-                  <el-button @click="incrementQuantity(item)">+</el-button>
-                </td>
-                <td>{{ getItemTotal(item).toFixed(2) }}</td>
-                <td>
-                  <el-button @click="removeItemFromCart(index, item)"
-                    >删除</el-button
-                  >
-                </td>
-              </tr>
-            </tbody>
-          </table> -->
+        <div class="cart-table-area" v-loading="this.$store.state.isLoading">
           <el-table
             class="cart_items_table"
             v-if="cartTotalLength"
@@ -58,6 +21,7 @@
             <el-table-column
               type="selection"
               :min-width="5"
+              :selectable="selectable"
             />
             <el-table-column
               class="item_info"
@@ -68,6 +32,8 @@
               <template #default="scope">
                 <img :src="scope.row.good_thumbnail" alt="缩略图" />
                 {{ scope.row.good_name }}
+                <el-tag v-if="scope.row.good_stock_nums<1" color="yellow" style="font-size:16px;color:dimgrey;">售罄</el-tag>
+                
               </template>
             </el-table-column>
             <el-table-column
@@ -106,6 +72,7 @@
 
         <div class="cart-summary">
           <div>全部商品 {{ cart.items.length }} 件</div>
+          <div>选择了 {{ cartSelectedLength }} 件商品</div>
           <div>总价：¥{{ cartTotalPrice }} 元</div>
           <el-button @click="toCheckOut">去结算</el-button>
         </div>
@@ -183,6 +150,7 @@ export default {
               good_id: res.data[i].goods.id,
               good_name: res.data[i].goods.name,
               good_price: res.data[i].goods.price,
+              good_stock_nums: res.data[i].goods.stock_nums,
               nums: res.data[i].nums,
               good_url: res.data[i].goods.get_absolute_url,
               good_thumbnail: res.data[i].goods.get_thumbnail,
@@ -194,7 +162,7 @@ export default {
           console.log("this.cart: ", this.cart.items);
           this.$nextTick(() => {
           for (var j = 0; j < this.cart.items.length; j++) {
-            if (this.cart.items[j].is_selected == true){
+            if (this.cart.items[j].is_selected == true && this.cart.items[j].good_stock_nums > 0) {
               this.$refs.cart_items_table_ref.toggleRowSelection(this.cart.items[j], true);
             }
           }})
@@ -215,12 +183,15 @@ export default {
       return item.good_price * item.nums;
     },
     incrementQuantity(item) {
-      // item.quantity += 1;
-
-      // this.updateCart();
-      // console.log("item:", item);
-
-      this.$store.commit("setIsLoading", true);
+      if (item.nums >= item.good_stock_nums) {
+        ElMessage({
+            showClose: true,
+            message: "没有那么多哦",
+            type: "error",
+            duration: 1500,
+          });
+      } else {
+        this.$store.commit("setIsLoading", true);
 
       const product_update = {
         nums: item.nums + 1,
@@ -229,7 +200,6 @@ export default {
       axios
         .patch("shopcarts/" + item.good_id + "/", product_update)
         .then(() => {
-          // console.log("update success: ", res);
           item.nums += 1;
         })
         .catch((err) => {
@@ -242,9 +212,9 @@ export default {
             duration: 1500,
           });
         });
-      // console.log('item2:', item)
 
       this.$store.commit("setIsLoading", false);
+      }
     },
     decrementQuantity(item) {
       this.$store.commit("setIsLoading", true);
@@ -258,7 +228,6 @@ export default {
         axios
           .patch("shopcarts/" + item.good_id + "/", product_update)
           .then(() => {
-            // console.log("update success: ", res);
             item.nums -= 1;
           })
           .catch((err) => {
@@ -273,16 +242,29 @@ export default {
           });
       }
 
-      // console.log('item2:', item)
-
       this.$store.commit("setIsLoading", false);
     },
     inputQuantity(item) {
+      console.log(item)
+      if (item.nums > item.good_stock_nums) {
+        ElMessage({
+            showClose: true,
+            message: "没有那么多哦",
+            type: "error",
+            duration: 1500,
+          });
+          item.nums = item.good_stock_nums;
+      } else if (item.nums < 1) {
+        ElMessage({
+            showClose: true,
+            message: "太少了哦",
+            type: "error",
+            duration: 1500,
+          });
+          item.nums = 1;
+      } else {
       this.$store.commit("setIsLoading", true);
 
-      if (item.nums < 1) {
-        console.log("注意，最少买一个");
-      } else {
         const product_update = {
           nums: item.nums,
         };
@@ -299,14 +281,10 @@ export default {
             });
           });
       }
-
+  
       this.$store.commit("setIsLoading", false);
     },
     removeItemFromCart(index, item) {
-      // this.cart.items = this.cart.items.filter(
-      //   (i) => i.product.id !== item.product.id
-      // );
-      // console.log("store.state: ", this.$store.state.cart.items);
       this.$store.commit("setIsLoading", true);
 
       axios
@@ -359,11 +337,22 @@ export default {
 
       this.$store.commit("setIsLoading", false);
     },
-    // updateCart() {
-    //   localStorage.setItem("cart", JSON.stringify(this.$store.state.cart));
-    // },
+    selectable(row){
+      return row.good_stock_nums > 0
+    },
     toCheckOut() {
-      this.$router.push("/check-out/");
+      if (this.selected_items.length > 0) {
+        console.log(this.selected_items.length)
+        this.$router.push("/check-out/");
+      }
+      else {
+        ElMessage({
+            showClose: true,
+            message: "最少选择一个商品哦",
+            type: "error",
+            duration: 1500,
+          });
+      }
     },
   },
   computed: {
@@ -372,8 +361,15 @@ export default {
         return (acc += parseInt(curVal.nums));
       }, 0);
     },
+    cartSelectedLength() {
+      if (this.selected_items.length === 0) {
+        return 0
+      } else {
+        return this.selected_items.length
+      }
+    },
     cartTotalPrice() {
-      return this.cart.items.reduce((accumulator, current) => {
+      return this.selected_items.reduce((accumulator, current) => {
         return (accumulator +=
           parseInt(current.good_price) * parseInt(current.nums));
       }, 0);
@@ -383,6 +379,11 @@ export default {
 </script>
 
 <style>
+.main-body {
+  padding-left: 7%;
+  padding-right: 8%;
+}
+
 .cart-summary {
   height: 50px;
   display: flex;
@@ -403,34 +404,4 @@ export default {
   height: 30px;
   text-align: center;
 }
-/* 
-.cart-table-area table {
-  table-layout: fixed;
-  width: 100%;
-}
-
-.cart-table-area thead {
-  background-color: #67a1ff;
-}
-.cart-table-area th {
-  color: #fff;
-  line-height: 17px;
-  font-weight: normal;
-}
-
-.cart-table-area tbody {
-  background-color: #eaf2ff;
-}
-.cart-table-area td {
-  color: #677998;
-  line-height: 12px;
-}
-
-.cart-table-area th,
-td {
-  width: 60px;
-  padding: 12px 2px;
-  font-size: 12px;
-  text-align: center;
-} */
 </style>

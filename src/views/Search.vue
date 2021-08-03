@@ -84,6 +84,11 @@ export default {
         this.$store.commit("setToken");
       });
     }
+    else {
+      axios.defaults.headers.common["Authorization"] = "";
+
+      this.$store.commit("removeToken");
+    }
   },
   mounted() {
     document.title = "搜索结果";
@@ -116,10 +121,15 @@ export default {
 </script>
 
 <style>
+.main-body {
+  padding-left: 7%;
+  padding-right: 8%;
+}
+
 .product-card {
   height: 320px;
   width: 225px;
-  margin: 10px;
+  margin: 30px;
 }
 
 .product-card .card {
@@ -131,6 +141,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  border-radius: 5px;
 }
 
 .card .product-info {
@@ -158,6 +169,8 @@ export default {
 .card img {
   height: 200px;
   width: 225px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 .card figure {

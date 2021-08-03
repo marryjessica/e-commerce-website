@@ -9,16 +9,17 @@
       <el-main class="main-body" v-loading="this.$store.state.isLoading">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>石材</el-breadcrumb-item>
+          <el-breadcrumb-item>{{ category_name }}</el-breadcrumb-item>
         </el-breadcrumb>
         <el-row class="category-name-container">
-          <span class="category-name">石材</span>
+          <span class="category-name">{{ category_name }}</span>
         </el-row>
 
-        <div>
+        <div class="products_container" v-if="productsLength">
+          <div>
           <el-col
             class="product-card"
-            v-for="(product, index) in latestProducts"
+            v-for="(product, index) in products"
             :key="product.id"
           >
             <div class="card">
@@ -44,7 +45,7 @@
                     type="text"
                     icon="el-icon-star-on"
                     class="product_fav_button"
-                    v-if="hasFav(product.id)"
+                    v-if="product.isFaved"
                     @click="delFromFav(product.id, index)"
                   />
                   <el-button
@@ -52,13 +53,30 @@
                     icon="el-icon-star-off"
                     class="product_fav_button"
                     v-else
-                    @click="addToFav(product.id)"
+                    @click="addToFav(product.id, index)"
                   />
                 </div>
               </div>
             </div>
           </el-col>
+          </div>
+          <el-pagination
+              :page-size="3"
+              layout="total, prev, pager, next, jumper"
+              :total="totalNumOrders"
+              @next-click="loadNext"
+              @prev-click="loadPrev"
+              @current-change="clickPage"
+            >
+            </el-pagination>
         </div>
+        <div v-else>
+          该分类还没有商品哦
+        </div>
+        <div>
+          
+        </div>
+        
       </el-main>
       <el-footer>
         <Footer />
@@ -80,8 +98,10 @@ export default {
   name: "Products",
   data() {
     return {
-      latestProducts: [],
+      products: [],
       favorited_products: [],
+      category_name: '',
+      totalNumOrders: 0,
     };
   },
   components: {
@@ -107,68 +127,118 @@ export default {
       });
     }
   },
+  created() {
+    if (localStorage.getItem("refresh") !== null && this.$store.state.tokenTimeDiff < 1800) {
+      this.getFavProducts();
+    }
+  },
   mounted() {
-    this.getLatestProducts();
-    this.getFavProducts();
+    this.getLatestProducts(1);
+    
   },
   methods: {
-    async getLatestProducts() {
+    async getLatestProducts(currentPage) {
       this.$store.commit("setIsLoading", true);
 
+      const category_slug = this.$route.params.category_slug;
+
       await axios
-        .get("/api/v1/latest-products/")
+        .get(`/api/v1/category-products/${category_slug}/?page=${currentPage}`)
         .then((res) => {
-          this.latestProducts = res.data;
-          console.log(res.data);
+          console.log(res.data.results);
+          this.totalNumOrders = res.data.count;
+          this.products.length = 0;
+
+          for (var i = 0; i < res.data.results.length; i++) {
+            const item = {
+              category_name: res.data.results[i].category_name,
+              description: res.data.results[i].description,
+              get_absolute_url: res.data.results[i].get_absolute_url,
+              get_image: res.data.results[i].get_image,
+              get_thumbnail: res.data.results[i].get_thumbnail,
+              id: res.data.results[i].id,
+              isFaved: this.hasFav(res.data.results[i].id),
+              name: res.data.results[i].name,
+              price: res.data.results[i].price,
+            }
+            this.products.push(item)
+          }
+          this.category_name = this.products[0].category_name
+          
         })
         .catch((err) => {
-          console.log("error:", err.response.data.messages);
+          console.log("error:", err);
         });
+
+      console.log(this.products)
 
       this.$store.commit("setIsLoading", false);
     },
-    async getFavProducts() {
+    getFavProducts() {
       var token = cookie.getCookie("token");
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
-      await axios.get("/retrieve_fav_products/").then((res) => {
+      axios.get("/retrieve_fav_products/").then((res) => {
         res.data.forEach((fav) => {
           this.favorited_products.push(fav.goods);
         });
-        console.log(this.favorited_products);
+        console.log(this.favorited_products);      
       });
     },
-    addToFav(id) {
+    addToFav(id, index) {
+      console.log(this.$route.path)
+      console.log('addtoFav: ', this.products, this.favorited_products, id, index)
+      if (localStorage.getItem("refresh") !== null && this.$store.state.tokenTimeDiff < 1800) {
       var token = cookie.getCookie("token");
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
       axios.post("/user_fav/", { goods: id }).then((res) => {
         this.favorited_products.push(res.goods);
-        console.log(res);
+        this.products[index].isFaved = true;
       });
+      } else {
+        this.$router.push("/login?to="+this.$route.path);
+      }
     },
     delFromFav(id, index) {
       var token = cookie.getCookie("token");
       axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
-      axios.delete("/user_fav/"+id+"/").then((res) => {
+      axios.delete("/user_fav/"+id+"/").then(() => {
         this.favorited_products.splice(index, 1);
-        console.log(res);
-        this.hasFav(id)
+        this.products[index].isFaved = false;
+        console.log(this.favorited_products)
       });
     },
     hasFav(id) {
       return this.favorited_products.includes(id);
     },
+    loadNext(currentPage) {
+        this.getLatestProducts(currentPage)
+    },
+    loadPrev(currentPage) {
+        this.getLatestProducts(currentPage)
+    },
+    clickPage(currentPage) {
+        this.getLatestProducts(currentPage)
+    },
   },
-  computed: {},
+  computed: {
+    productsLength() {
+      if (this.products.length === 0) {
+        return 0
+      } else {
+        return this.products.length
+      }
+    }
+  },
 };
 </script>
 
 <style>
 .main-body {
-  padding-left: 95px;
-  padding-right: 95px;
+  padding-left: 7%;
+  padding-right: 8%;
 }
 
 .category-name-container {
@@ -177,10 +247,15 @@ export default {
   font-style: italic;
 }
 
+.products_container {
+  display: flex;
+    flex-direction: column;
+}
+
 .product-card {
   height: 320px;
   width: 225px;
-  margin: 10px;
+  margin: 30px;
 }
 
 .product-card .card {
@@ -192,6 +267,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  border-radius: 5px;
 }
 
 .card .product-info {
@@ -220,6 +296,8 @@ export default {
 .card img {
   height: 200px;
   width: 225px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 .card figure {
@@ -230,6 +308,7 @@ export default {
   text-decoration: none;
   float: left;
   margin-top: 7px;
+  color: black;
 }
 
 .product_fav_button {

@@ -36,18 +36,20 @@ E-Commerce User Part:
             -Add item
             -Delete item
     -DONE Set a life for token
-    -Set user fav
+    -DONE Set user fav
         -DONE Able to add
         -DONE Able to cancel
         -DONE Able to view
-        -Show fav status on product
-    -Set user order
+        -DONE Show fav status on product
+    -Set user order        
+        -Record order change
         -DONE View orders
         -DONE Add order
-        -Cancel order
-        -Delete order record
-        -Filter orders
-        -Paginate orders
+        -DONE Cancel order
+        -DONE Filter orders
+        -DONE Paginate orders
+        -DONE Out of stock product can not create order
+    -DONE Paginate products page
     -DONE Set user address
         -DONE Add address
         -DONE Delete address
@@ -56,9 +58,14 @@ E-Commerce User Part:
         -DONE Set default address
     -Set user profile
         -DONE View profile
-        -Update profile
+        -DONE Update profile
+        -DONE Show username
+        -DONE Uneditable username
     -Set shopping cart
-        -Anonymity shopping cart merge to user shopping cart after log in
+        -DONE Anonymity can not add to shopping cart
+        -DONE out of stock product can not add to shopping cart
+        -DONE Disable select if out of stock
+        -DONE Selected total price and numbers
         -DONE Add to user shopping cart
         -DONE Delete from user shopping cart
         -DONE Vew user shopping cart
@@ -66,22 +73,52 @@ E-Commerce User Part:
             -DONE Increment quantity
             -DONE Decrement quantity
             -DONE Input quantity
-    -Set authorization
+    -DONE Set authorization
         -DONE Keep login status
         -DONE Log out if inactive
         -DONE Keep login if active
-    -Set check out
-        -DONE Change shipping address
-        -Select products to check out
-        -No selected product can not check out
+    -Set check out 
         -Can not return check out page after check out
-    -Set category
-        -Set different category show products which is that category
+        -DONE Change shipping address
+        -DONE Select products to check out
+        -DONE No selected product can not check out
+        -DONE No out of stock product in check out
+    -DONE Set category
+        -DONE Set different category show products which is that category
+    -Set order
+        -DONE Request cancel order
+        -Request withdraw cancel
+        -DONE Change order status
+        -DONE Show order detail
+        -DONE Only able to view if cancel order
+        -Custom service after completed order
+    -Bugs fix 持续更新
+        -AGAIN DONE Products page authentication bug: 有时401 有时没有Fav，有时正常。
+        -DONE Home page bug: category ui not display properly.
+        -DONE Authentication page need login again bug: have logged in but need login again
+        -DONE Long product name display bug: not show the full name
+        -After logged in, page does not jump, bug: 第二天打开，要求重新登录，点击登录显示登录成功，但是不跳转页面
+        -后台库存更新
+        -DONE Head bar ui disorder
+        -Only can use mobile number to login
+        -DONE Set address default and then cancel, the default icon will also shown in that address card
+        -把每个页面的beforecreate改到router里的beforeEach
 
 E-Commerce Manager Part:
-    -
-    -
-    -
+    -Customize admin page
+        -DONE Filter 
+        -DONE Display 
+        -DONE Read only
+        -Search
+    -Order 
+        -Change order status
+        -DONE Can not change order if cancelled
+        -Need confirm if change order status
+        -Update shipping information
+        -DONE Record changes
+        -售后
+        -customer reset password
+        -how to verify its the owner of user to reset password
     -
     -
     -

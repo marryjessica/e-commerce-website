@@ -7,13 +7,14 @@
       <el-main class="main-body" v-loading="this.$store.state.isLoading">
         <el-breadcrumb separator-class="el-icon-arrow-right">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ path: '/products' }">{{
-            this.$route.params.category_slug
-          }}</el-breadcrumb-item>
+          <el-breadcrumb-item
+            :to="{ path: '/' + $route.params.category_slug }"
+            >{{ product.category_name }}</el-breadcrumb-item
+          >
           <el-breadcrumb-item>{{ product.name }}</el-breadcrumb-item>
         </el-breadcrumb>
-        <el-row>
-          <el-col>
+        <div class="product_detail_container">
+          <div class="product_detail_left">
             <figure class="image">
               <img
                 :src="product.get_image"
@@ -22,32 +23,48 @@
                 width="300"
               />
             </figure>
-            <h1 class="title">{{ product.name }}</h1>
-            <p class="descirption">{{ product.descirption }}</p>
-          </el-col>
-
-          <el-col>
-            <h2 class="subtitle">详情</h2>
-            <p>{{ product.description }}</p>
-            <p><strong>价格：</strong>¥{{ product.price }}</p>
-
-            <div class="field has-addons mt-6">
-              <div class="control">
-                <input
+          </div>
+          <div class="product_detail_right">
+              <div class="product_detail_right_name">
+                  <h5 class="subtitle">商品名称</h5>
+                  <h3 style="    text-align: left;
+    margin-left: 8%;">{{ product.name }}</h3>
+              </div>
+            <div class="product_detail_right_description">
+                <h5 class="subtitle">商品详情</h5>
+            <p style="    margin-left: 8%;
+    text-align: left;">{{ product.description }}</p>
+            </div>
+            <div class="product_detail_right_buy">
+                <div class="product_detail_price">
+                    <p><strong>价格：</strong>¥{{ product.price }}</p>
+                    <p><strong>数量：</strong><input
                   class="quantity-input"
                   type="number"
                   min="1"
+                  :max="product.stock_nums"
                   v-model="quantity"
-                />
-              </div>
-              <div class="control">
-                <button class="button is-dark" @click="addToCart">
+                  style="width: 60px; height: 20px;"
+                /> {{ product.unit }}</p>
+                
+              <span style="font-size:10px">库存：{{ product.stock_nums }} {{ product.unit }}</span>
+                </div>
+               
+              <div class="product_detail_control">
+                <button
+                  class="addtocartbutton"
+                  v-if="product.stock_nums > 0"
+                  @click="addToCart"
+                >
                   加入购物车
                 </button>
-              </div>
+                <button class="addtocartbutton" v-else :disabled="true">
+                  加入购物车
+                </button> 
             </div>
-          </el-col>
-        </el-row>
+            </div>
+          </div>
+        </div>
       </el-main>
       <el-footer>
         <Footer />
@@ -86,7 +103,6 @@ export default {
       refresh_token.refresh !== null &&
       this.$store.state.tokenTimeDiff < 1800
     ) {
-      console.log("here");
       axios
         .post("/login/refresh/", refresh_token)
         .then((res) => {
@@ -94,10 +110,8 @@ export default {
           cookie.setCookie("token", res.data.access, 7);
 
           this.$store.commit("setToken");
-          console.log("sdfjlkjojxojci");
         })
         .catch(function(error) {
-          console.log("sdfsfsfsfsfd");
           if (error.response) {
             // Request made and server responded
             console.log(error.response.data);
@@ -154,39 +168,54 @@ export default {
       if (isNaN(this.quantity) || this.quantity < 1) {
         this.quantity = 1;
       }
-
-      const item = {
-        goods: this.product.id,
-        nums: this.quantity,
-      };
-      this.$store.commit("setIsLoading", true);
-
-      var token = this.$store.state.userInfo.token;
-      axios.defaults.headers.common["Authorization"] = "Bearer " + token;
-
-      axios
-        .post("/shopcarts/", item)
-        .then((res) => {
-          console.log("add to cart success: ", res);
-          ElMessage({
-            showClose: true,
-            message: "成功加入购物车",
-            type: "success",
-            duration: 1000,
-          });
-        })
-        .catch((err) => {
-          console.log(err.toString());
-          ElMessage({
-            showClose: true,
-            message: "添加购物车失败",
-            type: "fail",
-            duration: 1000,
-          });
-          this.$router.push("/login?to=/shopping-cart"); //可行
+      if (this.product.stock_nums < 1) {
+        ElMessage({
+          showClose: true,
+          message: "售罄了哦",
+          type: "error",
+          duration: 1000,
         });
+      } else if (this.quantity > this.product.stock_nums) {
+        ElMessage({
+          showClose: true,
+          message: "没有那么多哦",
+          type: "danger",
+          duration: 1000,
+        });
+      } else {
+        const item = {
+          goods: this.product.id,
+          nums: this.quantity,
+        };
+        this.$store.commit("setIsLoading", true);
 
-      this.$store.commit("setIsLoading", false);
+        var token = this.$store.state.userInfo.token;
+        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+
+        axios
+          .post("/shopcarts/", item)
+          .then((res) => {
+            console.log("add to cart success: ", res);
+            ElMessage({
+              showClose: true,
+              message: "成功加入购物车",
+              type: "success",
+              duration: 1000,
+            });
+          })
+          .catch((err) => {
+            console.log(err.toString());
+            ElMessage({
+              showClose: true,
+              message: "添加购物车失败",
+              type: "fail",
+              duration: 1000,
+            });
+            this.$router.push("/login?to=/shopping-cart"); //可行
+          });
+
+        this.$store.commit("setIsLoading", false);
+      }
     },
   },
   components: {
@@ -195,3 +224,71 @@ export default {
   },
 };
 </script>
+
+<style>
+.main-body {
+  padding-left: 7%;
+  padding-right: 8%;
+}
+
+.product_detail_container {
+    display: flex;
+    flex-direction: row;
+    margin: 30px 0px;
+}
+
+.product_detail_left {
+    width: 35%;
+}
+
+.product_detail_right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0px 100px;
+    width: 60%;
+}
+
+.product_detail_right_name {
+    height: 100px;
+    width: 100%;
+}
+
+h5.subtitle {
+    text-align: left;
+}
+
+.product_detail_right_description {
+    height: 55%;
+    width: 100%;
+}
+
+.product_detail_right_buy{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.product_detail_price {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.addtocartbutton {
+    margin: 20px 10px;
+    font-size: 22px;
+    background: linear-gradient(to right, #188bf7, #1ab0f5);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding: 5px;
+    width: 200px;
+    cursor: pointer;
+}
+   
+</style>

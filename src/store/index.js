@@ -60,38 +60,41 @@
 import { createStore } from 'vuex'
 
 import cookie from '@/static/cookie';
+import axios from "axios";
+
 
 export default createStore({
     state: {
         userInfo: {
-            name: cookie.getCookie('name')||'',
-            token: cookie.getCookie('token')||'',
-            refresh: localStorage.getItem('refresh')||''
+            name: cookie.getCookie('name') || '',
+            token: cookie.getCookie('token') || '',
+            refresh: localStorage.getItem('refresh') || ''
         },
-        // goods_list
+        carousels: [],
         cart: {
             items: []
         },
-        orders: [],
+        // orders: [],
         isLoading: false,
         tokenTimeDiff: 0,
     },
     mutations: {
-        addToOrder(state) {
-            localStorage.setItem('orders', JSON.stringify(state.orders))
-        },
-        isTokenExpired(state){
+        // addToOrder(state) {
+        //     localStorage.setItem('orders', JSON.stringify(state.orders))
+        // },
+        isTokenExpired(state) {
             const recordTime = new Date()
             const tokenSetTime = parseInt(localStorage.getItem('token_set_time'))
-            if(tokenSetTime === null) {
+            if (tokenSetTime === null) {
                 console.log("no token settle")
             } else {
                 const newTime = recordTime.getTime()
                 console.log(newTime, " - ", tokenSetTime)
-                const timeDiff = (newTime - tokenSetTime)/1000
+                const timeDiff = (newTime - tokenSetTime) / 1000
                 console.log("time diff: ", timeDiff)
                 state.tokenTimeDiff = timeDiff
-                if(timeDiff > 1800) {
+                console.log(state.tokenTimeDiff)
+                if (timeDiff > 1800) {
                     console.log("please re-login")
                 }
             }
@@ -105,7 +108,7 @@ export default createStore({
 
             var current_time = new Date().getTime()
             var token_set_time = localStorage.getItem('token_set_time')
-            if(token_set_time === null) {
+            if (token_set_time === null) {
                 console.log("it is null")
                 localStorage.setItem('token_set_time', JSON.stringify(current_time))
             } else {
@@ -136,14 +139,6 @@ export default createStore({
             } else {
                 localStorage.setItem('cart', JSON.stringify(state.cart))
             }
-
-            // if (localStorage.getItem('token')) {
-            //     state.token = localStorage.getItem('token')
-            //     state.isAuthenticated = true
-            // } else {
-            //     state.token = ''
-            //     state.isAuthenticated = false
-            // }
         },
         addToCart(state, item) {
             const exists = state.cart.items.filter(i => i.product.id === item.product.id)
@@ -156,6 +151,21 @@ export default createStore({
 
             localStorage.setItem('cart', JSON.stringify(state.cart))
         },
+        setCarousel(state) {
+            // state.carousels = items
+            if (state.carousels.length === 0) {
+                axios
+                    .get("/api/v1/carousels/")
+                    .then((res) => {
+                        state.carousels = res.data;
+                        console.log(res.data);
+                    })
+                    .catch((err) => {
+                        console.log("error:", err.response.data.messages);
+                    });
+            }
+
+        }
     },
     actions: {
     },

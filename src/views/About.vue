@@ -20,7 +20,7 @@ export default {
     var refresh_token = {
       refresh: localStorage.getItem("refresh"),
     };
-    
+
     this.$store.commit("isTokenExpired");
 
     if (
@@ -33,6 +33,11 @@ export default {
 
         this.$store.commit("setToken");
       });
+    }
+    else {
+      axios.defaults.headers.common["Authorization"] = "";
+
+      this.$store.commit("removeToken");
     }
   },
 };

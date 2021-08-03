@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '../store';
 import Home from '../views/Home.vue'
+// import axios from "axios";
+// import cookie from "@/static/cookie";
 
 // import ProductDetail from '../views/ProductDetail.vue'
 
@@ -24,17 +26,12 @@ const routes = [
     component: () => import('../views/Login.vue')
   },
   {
-    path: '/shopping_cart',
-    name: 'Shopping_cart',
-    component: () => import('../components/Shopping_cart.vue')
-  },
-  {
     path: '/signup',
     name: 'Signup',
     component: () => import('../views/Signup.vue')
   },
   {
-    path: '/products',
+    path: '/:category_slug',
     name: 'Products',
     component: () => import('../views/Products.vue')
   },
@@ -59,12 +56,49 @@ const routes = [
   {
     path: '/check-out',
     name: 'CheckOut',
-    component: () => import('../views/CheckOut.vue')
+    component: () => import('../views/CheckOut.vue'),
+    meta: {
+      requireLogin: true,
+    }
   },
   {
-    path: '/user-profile',
-    name: 'UserProfile',
-    component: ()=> import('../views/UserProfile.vue'),
+    path: '/user-home',
+    name: 'UserPage',
+    component: () => import('../views/UserPage.vue'),
+    children: [
+      {
+        path: '/user-orders',
+        name: 'UserOrders',
+        component: () => import('../views/UserOrders.vue'),
+        meta: {
+          requireLogin: true
+        }
+      },
+      {
+        path: '/user-address',
+        name: 'UserAddress',
+        component: () => import('../views/UserAddress.vue'),
+        meta: {
+          requireLogin: true
+        }
+      },
+      {
+        path: '/user-fav',
+        name: 'UserFav',
+        component: () => import('../views/UserFav.vue'),
+        meta: {
+          requireLogin: true
+        }
+      },
+      {
+        path: '/user-profile',
+        name: 'UserProfile',
+        component: () => import('../views/UserProfile.vue'),
+        meta: {
+          requireLogin: true
+        }
+      },
+    ],
     meta: {
       requireLogin: true
     }
@@ -78,7 +112,25 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requireLogin) && !store.state.userInfo.name) {
+  store.commit("isTokenExpired");
+  if (to.matched.some(record => record.meta.requireLogin) && store.state.tokenTimeDiff > 1800) {
+    // var refresh_token = {
+    //   refresh: localStorage.getItem("refresh"),
+    // };
+
+    // console.log('treid again+++++++++++++++++++++++')
+
+    // if (
+    //   refresh_token.refresh !== null &&
+    //   store.state.tokenTimeDiff < 1800
+    // ) {
+    //   axios.post("/login/refresh/", refresh_token).then((res) => {
+    //     cookie.delCookie("token");
+    //     cookie.setCookie("token", res.data.access, 7);
+
+    //     store.commit("setToken");
+    //   });
+    // }
     next({ name: 'Login', query: { to: to.path } })
   } else {
     next()

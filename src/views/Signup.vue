@@ -7,80 +7,55 @@
       <el-main class="sign-main">
         <el-container class="sign-main-back-container">
           <el-card class="sign-card">
-            <h2>用户注册</h2>
+            <h2 style="margin:0px 10px;">用户注册</h2>
             <form @submit.prevent="submitForm">
               <div class="field">
-                <label>Username</label>
+                <label>用户名：</label>
                 <div class="control">
-                  <input type="text" class="input" v-model="username" />
+                  <input type="text" class="signinput" v-model="username" />
                 </div>
               </div>
 
               <div class="field">
-                <label>Mobile</label>
+                <label>手机号：</label>
                 <div class="control">
-                  <input type="number" class="input" v-model="mobile" />
+                  <input type="number" class="signinput" v-model="mobile" />
                 </div>
               </div>
 
               <div class="field">
-                <label>Password</label>
+                <label>密码：</label>
                 <div class="control">
-                  <input type="password" class="input" v-model="password" />
+                  <input type="password" class="signinput" v-model="password" />
                 </div>
               </div>
 
               <div class="field">
-                <label>Repeat password</label>
+                <label>再次输入密码：</label>
                 <div class="control">
-                  <input type="password" class="input" v-model="re_password" />
+                  <input
+                    type="password"
+                    class="signinput"
+                    v-model="re_password"
+                  />
                 </div>
               </div>
 
-              <div class="notification is-danger" v-if="errors.length">
+              <div class="notification" v-if="errors.length">
                 <p v-for="error in errors" v-bind:key="error">{{ error }}</p>
               </div>
 
               <div class="field">
                 <div class="control">
-                  <button class="button is-dark">Sign up</button>
+                  <button class="sign-button">注册</button>
                 </div>
               </div>
 
-              <hr />
-
-              Or <router-link to="/login">click here</router-link> to log in!
-            </form>
-            <!-- <el-form
-              class="sign-form"
-              :model="ruleForm"
-              :rules="rules"
-              ref="signForm"
-            >
-              <el-form-item class="sign-input-phone" prop="username">
-                <el-input type="text" placeholder="账号/手机号"></el-input>
-              </el-form-item>
-              <el-form-item class="sign-input-password" prop="password">
-                <el-input
-                  type="text"
-                  placeholder="6-20位字母、符号或者数字"
-                ></el-input>
-              </el-form-item>
-              <el-form-item class="sign-input-repeat-password" prop="re_password">
-                <el-input type="text" placeholder="再次输入密码"></el-input>
-              </el-form-item>
-              <el-form-item class="sign-sign-button">
-                <el-button>注册</el-button>
-              </el-form-item>
-              <el-form-item class="sign-other-opts">
+              <div class="tologin">
                 <span>已有账号？</span>
-                <router-link
-                  class="sign-go-to-login-page"
-                  :to="{ name: 'Login' }"
-                  >用户登陆</router-link
-                >
-              </el-form-item>
-            </el-form> -->
+                <router-link to="/login">点我登录</router-link>
+              </div>
+            </form>
           </el-card>
         </el-container>
       </el-main>
@@ -99,7 +74,7 @@ import Footer from "@/components/Footer.vue";
 import { ElMessage } from "element-plus";
 
 import axios from "axios";
-import cookie from "@/static/cookie"
+import cookie from "@/static/cookie";
 
 export default {
   name: "Signup",
@@ -113,26 +88,30 @@ export default {
       mobile: "",
       password: "",
       re_password: "",
-      errors: []
+      errors: [],
     };
   },
   methods: {
     submitForm() {
       var that = this;
-      this.errors = [];
+      var msg = "";
       if (this.username === "") {
-        this.errors.push("The username is missing");
+        msg = "用户名不能为空";
+      } else if (this.mobile === "") {
+        msg = "手机号不能为空";
+      } else if (this.password === "") {
+        msg = "密码请再长一点";
+      } else if (this.password !== this.re_password) {
+        msg = "两次密码不匹配";
       }
-      if (this.mobile === "") {
-        this.errors.push("The mobile is missing");
-      }
-      if (this.password === "") {
-        this.errors.push("The password is too short");
-      }
-      if (this.password !== this.re_password) {
-        this.errors.push("The passwords doesn't match");
-      }
-      if (!this.errors.length) {
+      if (msg !== "") {
+        ElMessage({
+          showClose: true,
+          message: msg,
+          type: "error",
+          duration: 1000,
+        });
+      } else {
         const formData = {
           username: that.username,
           mobile: that.mobile,
@@ -142,11 +121,11 @@ export default {
           .post("/users/", formData)
           .then((res) => {
             console.log("sign up successfully", res.data);
-            cookie.setCookie('name', res.data.username);
-            cookie.setCookie('token', res.data.token);
-            
-            that.$store.dispatch('setInfo');
-            
+            cookie.setCookie("name", res.data.username);
+            cookie.setCookie("token", res.data.token);
+
+            that.$store.dispatch("setInfo");
+
             this.$router.push("/login");
             ElMessage({
               showClose: true,
@@ -157,16 +136,26 @@ export default {
           })
           .catch((error) => {
             if (error.response) {
-              for (const property in error.response.data) {
-                this.errors.push(
-                  `${property}: ${error.response.data[property]}`
-                );
+              if (error.response.data["username"]) {
+                msg = "不可用用户名";
+              } else if (error.response.data["password"]) {
+                msg = "不可用密码";
+              } else if (error.response.data["mobile"]) {
+                msg = "不可用手机号"
               }
-              console.log(JSON.stringify(error.response.data));
+              ElMessage({
+                showClose: true,
+                message: msg,
+                type: "error",
+                duration: 1000,
+              });
             } else if (error.message) {
-              this.errors.push("Something went wrong. Please try again");
-
-              console.log(JSON.stringify(error));
+              ElMessage({
+                showClose: true,
+                message: error.message,
+                type: "error",
+                duration: 1000,
+              });
             }
           });
       }
@@ -194,7 +183,7 @@ export default {
 }
 
 #sign .sign-card {
-  height: 400px;
+  height: 450px;
   width: 300px;
   position: absolute;
   top: 170px;
@@ -219,5 +208,40 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: center;
+}
+
+.signinput {
+  height: 25px;
+  width: 200px;
+  border: 0.5px solid grey;
+  border-radius: 5px;
+  text-indent: 14px;
+}
+
+#sign .sign-card label {
+  margin: 10px 10px 10px 25px;
+  float: left;
+  font-weight: bold;
+}
+
+.sign-button {
+  margin: 15px 10px 10px 10px;
+  font-size: 22px;
+  background: #188bf7;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  padding: 4px;
+  width: 100px;
+  cursor: pointer;
+}
+
+.tologin {
+  border-top: 1px solid grey;
+  margin: 1px 10px;
+  padding: 5px;
+  font-size: 14px;
+  color: #525252;
+  text-align: right;
 }
 </style>

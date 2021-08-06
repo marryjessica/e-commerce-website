@@ -31,6 +31,7 @@
                 <router-link
                   class="product-button"
                   :to="product.get_absolute_url"
+                  style="color:black;"
                   >查看</router-link
                 >
               </div>

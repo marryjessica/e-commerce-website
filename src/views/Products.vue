@@ -61,7 +61,7 @@
           </el-col>
           </div>
           <el-pagination
-              :page-size="3"
+              :page-size="20"
               layout="total, prev, pager, next, jumper"
               :total="totalNumOrders"
               @next-click="loadNext"

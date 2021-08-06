@@ -14,6 +14,7 @@
           <option value="SHOPPING">已发货</option>
           <option value="ORDER_COMPLETED">订单完成</option>
           <option value="REQUEST_CANCEL">已申请取消订单</option>
+          <option value="WITHDRAW_REQUEST">已申请撤销取消</option>
           <option value="ORDER_CANCEL">订单取消</option>
         </select>
       </div>
@@ -44,8 +45,8 @@
                       </div>
                       <div class="order_shipping_info">
                         <span>运单号：</span>
-                        <span>12345678987654345678765</span>
-                        <span class="shipping_company">韵达</span>
+                        <span>{{ order.shipping_number }}</span>
+                        <span class="shipping_company">{{ order.shipping_company }}</span>
                       </div>
                       
                   </div>
@@ -91,6 +92,8 @@
                   v-if="
                     order.order_status != 'REQUEST_CANCEL' &&
                       order.order_status != '6'
+                        && order.order_status != 'ORDER_CANCEL'
+                          && order.order_status != 'WITHDRAW_REQUEST'
                   "
                   @click="requestCancelOrder(order.id, index)"
                 >
@@ -98,6 +101,7 @@
                 </el-button>
                 <el-button size="small" 
                 class="request_button"
+                @click="withdrawRequest(order.id, index)"
                 v-if="order.order_status === 'REQUEST_CANCEL' ||
                       order.order_status === '6'">
                     申请撤销
@@ -199,6 +203,8 @@ export default {
         return "已申请取消订单";
       } else if (status === "ORDER_CANCEL" || status === "7") {
         return "订单取消";
+      } else if (status === "WITHDRAW_REQUEST" || status === "8") {
+        return "已申请撤销取消"
       }
     },
     changePage(currentPage) {
@@ -218,6 +224,8 @@ export default {
         this.getOrders("/user_orders_request_cancel/?page=", currentPage);
       } else if (this.current_filter === "ORDER_CANCEL") {
         this.getOrders("/user_orders_cancelled/?page=", currentPage);
+      } else if (this.current_filter === "WITHDRAW_REQUEST") {
+        this.getOrders("/user_orders_withdraw_request/?page=", currentPage);
       }
     },
     loadNext(currentPage) {
@@ -252,6 +260,8 @@ export default {
         this.getOrders("/user_orders_request_cancel/?page=", 1);
       } else if (event.target.value === "ORDER_CANCEL") {
         this.getOrders("/user_orders_cancelled/?page=", 1);
+      } else if (event.target.value === "WITHDRAW_REQUEST") {
+        this.getOrders("/user_orders_withdraw_request/?page=", 1);
       }
     },
     requestCancelOrder(id, index) {
@@ -266,6 +276,24 @@ export default {
           .then((res) => {
             console.log("orders data: ", res.data);
             this.user_orders[index].order_status = "REQUEST_CANCEL";
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    },
+    withdrawRequest(id, index) {
+      var double_check = confirm("您确定要申请取消订单吗？");
+
+      if (double_check) {
+        var token = cookie.getCookie("token");
+        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+
+        axios
+          .patch(`/user_orders/${id}/`, { order_status: "WITHDRAW_REQUEST" })
+          .then((res) => {
+            console.log("orders data: ", res.data);
+            this.user_orders[index].order_status = "WITHDRAW_REQUEST";
           })
           .catch((err) => {
             console.log(err);

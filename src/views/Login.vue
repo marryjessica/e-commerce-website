@@ -70,7 +70,7 @@ export default {
     };
   },
   mounted() {
-    document.title = "Log In | Djackets";
+    document.title = "中新材集采网站";
   },
   methods: {
     submitForm() {

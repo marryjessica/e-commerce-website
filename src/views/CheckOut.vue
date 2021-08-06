@@ -7,88 +7,123 @@
         </div>
       </el-header>
       <el-main class="main-body">
-        <table class="checkout-table">
-          <thead>
-            <tr>
-              <th>商品信息</th>
-              <th>单价（元）</th>
-              <th>数量</th>
-              <th>小计</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <div v-loading="this.$store.state.isLoading">
-              <el-row v-for="item in cart.items" :key="item.goods.id">
-                <tr>
-                  <td>
-                    <router-link :to="item.goods.get_absolute_url">
-                      <figure class="image">
-                        <img :src="item.goods.get_thumbnail" alt="缩略图" />
-                      </figure>
-                      {{ item.goods.name }}
-                    </router-link>
-                  </td>
-                  <td>{{ item.goods.price }}</td>
-                  <td>
-                    {{ item.nums }}
-                  </td>
-                  <td>{{ getItemTotal(item).toFixed(2) }}</td>
-                </tr>
-              </el-row>
-            </div>
-          </tbody>
-        </table>
-        <div class="cart-summary">
+        <el-table
+          class="cart_items_table"
+          v-if="cartTotalLength"
+          ref="cart_items_table_ref"
+          :data="cart.items"
+          stripe
+          style="width: 100%"
+        >
+          <el-table-column
+            class="item_info"
+            prop="good_thumbnail"
+            label="商品名称"
+            :min-width="35"
+          >
+            <template #default="scope">
+              <img :src="scope.row.goods.get_thumbnail" alt="缩略图" />
+              <span>{{ scope.row.goods.name }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="goods.price"
+            label="单价（元）"
+            :min-width="15"
+          />
+          <el-table-column prop="nums" label="数量" :min-width="20">
+            <template #default="scope">
+              <span>{{ scope.row.nums }} </span>
+            </template>
+          </el-table-column>
+          <el-table-column label="金额" :min-width="15">
+            <template #default="scope">
+              {{ getItemTotal(scope.row).toFixed(2) }}
+            </template>
+          </el-table-column>
+        </el-table>
+        <p v-else>没有商品</p>
+        <div class="checkout-summary">
           <div>全部商品 {{ cart.items.length }} 件</div>
           <div>总价：¥{{ cartTotalPrice }} 元</div>
         </div>
-        <div>
-          <h3>收货地址</h3>
-          <el-row>
-            {{ selected_address.address }}
-            {{ selected_address.signer_name }}
+        <div class="checkout-address">
+          <h4 style="text-align:left;">
+            收货信息<el-button
+              style="margin-left: 40px;"
+              size="mini"
+              @click="swapSelectedAddress"
+            >
+              修改收货地址
+            </el-button>
+          </h4>
+
+          <span style="text-align:left;">
+            收货人: {{ selected_address.signer_name }} , 联系电话:
             {{ selected_address.signer_mobile }}
-          </el-row>
-          <el-button @click="swapSelectedAddress">
-            修改收货地址
-          </el-button>
+            , 收货地址:
+            {{
+              selected_address.province +
+                selected_address.city +
+                selected_address.district +
+                selected_address.address
+            }}</span
+          >
         </div>
         <div class="change_address_box" v-if="change_address_box">
           <div class="change_address">
-            <h3>我的地址</h3>
-            <h4
-              class="address_option"
-              v-for="(address, index) in user_address"
-              :key="address"
+            <div
+              style="display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 90px;"
             >
-              <el-radio
-                v-model="selected_address.id"
-                :label="address.id"
-                @click="changeSelectedAddress(index)"
-                >{{
-                  address.province +
-                    "省" +
-                    address.city +
-                    "市" +
-                    address.district +
-                    "区" +
-                    address.address
-                }}</el-radio
+              <h3>我的地址</h3>
+              <span
+                class="address_option"
+                v-for="(address, index) in user_address"
+                :key="address"
+                style="margin:10px 0px;"
               >
-            </h4>
-            <el-button @click="swapSelectedAddress">确定</el-button>
+                <el-radio
+                  v-model="selected_address.id"
+                  :label="address.id"
+                  @click="changeSelectedAddress(index)"
+                  ><span
+                    >{{
+                      address.province +
+                        "/" +
+                        address.city +
+                        "/" +
+                        address.district +
+                        "/" +
+                        address.address
+                    }}
+                  </span></el-radio
+                >
+              </span>
+              <el-button @click="swapSelectedAddress">确定</el-button>
+            </div>
           </div>
         </div>
-        <div>
-          <el-button v-if="this.cart.items.length" @click="CheckOut">下单</el-button>
-          <el-button v-else disabled="true">下单</el-button>
+        <div style="text-align:right; ">
+          <el-button
+            v-if="this.cart.items.length"
+            @click="CheckOut"
+            style="margin-top: 10px; margin-right: 100px; width: 120px;"
+            >下单</el-button
+          >
+          <el-button v-else disabled="true" style="margin-top: 10px; margin-right: 100px; width: 120px;">下单</el-button>
         </div>
         <div class="order_success_box" v-if="order_success">
           <div class="order_success_box_content">
             <h2>下单成功</h2>
-            <el-button :to="{ name: 'Home' }">继续购物</el-button>
-            <router-link :to="{ name: 'UserProfile' }">查看订单</router-link>
+            <router-link :to="{ name: 'Home' }" class="continue-next"
+              >继续购物</router-link
+            >
+            <router-link :to="{ name: 'UserOrders' }" class="continue-next"
+              >查看订单</router-link
+            >
           </div>
         </div>
       </el-main>
@@ -242,6 +277,7 @@ export default {
               duration: 1000,
             });
             console.log("下单成功");
+            this.cart.items = [];
             this.order_success = true;
           })
           .catch((err) => {
@@ -281,6 +317,26 @@ export default {
   padding-right: 8%;
 }
 
+.el-table__row .cell img {
+  width: 100px;
+  height: 100px;
+  margin-right: 20px;
+}
+
+.checkout-summary {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 92px 20px 60px;
+  border-bottom: 1px solid #ebeef4;
+}
+
+.checkout-address {
+  border-bottom: 1px solid #ebeef3;
+  padding: 10px 20px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
 .order_success_box {
   position: fixed;
   top: 0;
@@ -288,11 +344,12 @@ export default {
   width: 100%;
   height: 100%;
   background-color: rgb(0, 0, 0, 0.5);
+  z-index: 1;
 }
 
 .order_success_box_content {
-  width: 500px;
-  height: 300px;
+  width: 400px;
+  height: 200px;
   padding: 20px;
   background-color: #fff;
   position: absolute;
@@ -309,11 +366,12 @@ export default {
   width: 100%;
   height: 100%;
   background-color: rgb(0, 0, 0, 0.5);
+  z-index: 1;
 }
 
 .change_address_box .change_address {
-  width: 500px;
-  height: 300px;
+  width: 460px;
+  height: auto;
   padding: 20px;
   background-color: #fff;
   position: absolute;
@@ -323,7 +381,23 @@ export default {
   margin-left: -250px;
 }
 
+.el-radio {
+  white-space: break-spaces;
+}
+
 .change_address_box .change_address .address_option span {
   font-size: 16px;
+}
+
+.continue-next {
+  text-decoration: none;
+  color: black;
+  border: 1px solid lightgrey;
+  border-radius: 3px;
+  margin: 10px;
+  padding: 10px;
+  position: relative;
+  top: 50px;
+  cursor: pointer;
 }
 </style>

@@ -104,6 +104,10 @@ export default {
       } else if (this.password !== this.re_password) {
         msg = "两次密码不匹配";
       }
+      var reg=/^1[3456789]\d{9}$/;
+      if(!reg.test(this.mobile)){
+        msg = "请输入正确手机号";
+      } 
       if (msg !== "") {
         ElMessage({
           showClose: true,
@@ -142,6 +146,8 @@ export default {
                 msg = "不可用密码";
               } else if (error.response.data["mobile"]) {
                 msg = "不可用手机号"
+              } else {
+                msg = "请刷新页面再试一下"
               }
               ElMessage({
                 showClose: true,
@@ -149,10 +155,10 @@ export default {
                 type: "error",
                 duration: 1000,
               });
-            } else if (error.message) {
+            } else {
               ElMessage({
                 showClose: true,
-                message: error.message,
+                message: error,
                 type: "error",
                 duration: 1000,
               });
